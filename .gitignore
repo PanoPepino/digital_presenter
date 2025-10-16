@@ -1,0 +1,27 @@
+# This seems to be a file to ignore specific files and folder to not upload from my computer to github
+
+# Python files
+__pycache__/
+/env
+/build
+/dist
+*.egg-info/
+
+# Docs
+docs/build/
+
+# Manim
+examples/example_media/
+
+# Others
+.DS_Store
+
+# Sphinx documentation
+docs/_build/
+docs/.doctrees/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
