@@ -34,15 +34,17 @@ class Eyes(VMobject):
     .. code-block:: python
 
         from manim import *
-        from digital_creature import *
+        from manim_digital_creature import *
+
+        -----------TO BE CONSTRUCTED---------------
 
     """
 
     def __init__(self,
                  eyelid_color_input: ParsableManimColor = BLACK,
-                 eyelid_stroke_width: float = 0.1,
+                 eyelid_stroke_width: float=0.1,
                  eyeball_color_input: ParsableManimColor = WHITE,
-                 pupil_to_eye_rate: float = 0.5,
+                 pupil_to_eye_rate: float=0.5,
                  pupil_color_input: ParsableManimColor = BLACK,
                  reflection_direction: list[float] = UR,
                  eyes_distance: str = 0.1,  # If 0, the eyes will be touching.
@@ -148,14 +150,49 @@ class Eyes(VMobject):
                 self.blinking = False
 
     def look_at(self,
-                direction: list[str] = UP,
-                rf: float = there_and_back_with_pause,
-                rt: float = 3) -> Animation:
-        return AnimationGroup(self.sight.animate(rate_func=rf, run_time=rt).shift(0.25*self.pupil_to_eye_rate*direction))
+                direction: list | Mobject,
+                rf: float=there_and_back_with_pause,
+                rt: float=3) -> Animation:
+        """
+        Method to make the :class:`Eyes` look in a given direction. It will compute the normalised vector between the eyes of the creature and the object/direction to display a more realistic look.
+
+        :param direction: The direction or the object to look at.
+        :type direction: list | Mobject
+
+        :param rf: Animation rate function. Defaults to :meth: `there_and_back_with_pause`.
+        :type rf: `func`
+
+        :param rt: Animation duration. Defaults to 3".
+        :type rt: float
+
+        :returns: The animation of the eyes looking at the specific direction.
+        :rtype: `Animation`
+
+        """
+
+        if isinstance(direction, Mobject):
+            vector = (direction.get_center()-self.oculii.get_center())
+            new_direction = vector/np.linalg.norm(vector)
+            print(np.array(new_direction))
+        else:
+            new_direction = direction
+            print(new_direction)
+
+        return AnimationGroup(self.sight.animate(rate_func=rf, run_time=rt).shift(0.25*self.pupil_to_eye_rate*new_direction))
 
     def bored(self,
-              rf: float = there_and_back_with_pause,
-              rt: float = 3) -> Animation:
+              rf: float=there_and_back_with_pause,
+              rt: float=3) -> Animation:
         return AnimationGroup(self.oculii[0][3:4].animate(rate_func=rf).set_opacity(1),
                               self.oculii[1][3:4].animate(rate_func=rf).set_opacity(1),
-                              self.sight.animate(rate_func=rf).shift(0.05*UP), run_time=rt)
+                              self.sight.animate(rate_func=rf).shift(0.05*UP), 
+                              run_time=rt)
+    def surprised(self,
+                 rf: float=there_and_back_with_pause,
+                 rt: float=3) -> Animation:
+        return  AnimationGroup(self.sight[0].animate(rate_func=rf, run_time=rt).scale(0.5),
+                               self.sight[-1].animate(rate_func=rf, run_time=rt).scale(0.5),
+                               )
+    
+
+                

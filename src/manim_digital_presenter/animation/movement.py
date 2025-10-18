@@ -107,7 +107,9 @@ class An_Cre(AnimationGroup):
         if input_action == "salute":
             super().__init__(
                 creature.l_hand.animate(rate_func=animation_rate_func).rotate(-5.5*PI/6, about_point=creature.l_shoulder.get_center(), axis=[0, 0, 1]), run_time=animation_run_time, **kwargs)
+            
 
+        ## CONSIDER TO ADD, BECAUSE THERE IS A PROBLEM TRYING TO CREATE BOTH EYELID CLOSING SAME TIME.
         if input_action == "suspicion":
             super().__init__(
                 AnimationGroup(creature.oculii[0][3:5].animate(rate_func=animation_rate_func).set_opacity(1),

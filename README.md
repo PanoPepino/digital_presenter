@@ -3,7 +3,7 @@
 
 [TO BE IMPROVED]
 
-Files of python and Manim libraries created to display a digital presenter creature which writes and acts as written in a script (csv). This script has two "columns": One for the actions of the creature, while the other one is the text to be displayed.
+Repository of Manim libraries to create digital presenter creature which writes and acts as written in a script (csv). 
 
 Bla bla bla
 
@@ -56,14 +56,11 @@ from manim_digital_presenter import *
 # TO DO:
 
 - Fix eye_lid thickness or similar. Eyes are quite solid there. [_]
-- Make optional the existence of arms for the creature. [_]
 - Reestructure the animation class and methods inside creature class. [_]
     - animation class will be used inside timeline (Recall issue with passing class that are not animation) [_]
     - Methods within the class are for convinient, non-timelined projects. [_]
 - Reestructure how the textbox and similar objects are called through the script function [_]
 - Create simple logo to add to github and webpage. [_]
-- Transform into a package. Call it manim_digital_presenter. [_]
-- Add the svg's within the package (see manim_beanim structure). [_]
 - To write down good docstrings for documentation. [_]
 - To create documentation and deploy in webpage. Use beanim-like structure. [_]
 
