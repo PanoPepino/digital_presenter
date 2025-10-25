@@ -1,4 +1,3 @@
-from manim import *
 from ..my_imports import *
 
 __all__ = ["Eyes"]
@@ -28,6 +27,7 @@ class Eyes(VMobject):
 
 
     .. note::
+        Animations of the :class:`Eyes` will be called in the :class:`Creature` by the :method:`super()`.
 
     **Example usage:**
 
@@ -36,15 +36,27 @@ class Eyes(VMobject):
         from manim import *
         from manim_digital_creature import *
 
-        -----------TO BE CONSTRUCTED---------------
+        class Eye_Test(Scene):
+            def construct(self):
+                ojitos = Eyes(eyelid_color_input=BLUE, 
+                              eyes_distance=1).scale(0.5)
+                ojitos.move_to([0, 0, 0])
+                self.add(ojitos)
+                self.wait(3)
+                self.play(ojitos.look_at(UL))
+                self.play(ojitos.bored())
+                self.play(ojitos.surprised())
+                self.wait(3)
+                self.play(ojitos.excited())
 
     """
 
     def __init__(self,
                  eyelid_color_input: ParsableManimColor = BLACK,
-                 eyelid_stroke_width: float=0.1,
+                 eyelid_stroke_width: float = 0.1,
+                 eyelid_stroke_color: ParsableManimColor = BLACK,
                  eyeball_color_input: ParsableManimColor = WHITE,
-                 pupil_to_eye_rate: float=0.5,
+                 pupil_to_eye_rate: float = 0.5,
                  pupil_color_input: ParsableManimColor = BLACK,
                  reflection_direction: list[float] = UR,
                  eyes_distance: str = 0.1,  # If 0, the eyes will be touching.
@@ -53,6 +65,7 @@ class Eyes(VMobject):
 
         self.eyelid_color_input = eyelid_color_input
         self.eyelid_stroke_width = eyelid_stroke_width
+        self.eyelid_stroke_color = eyelid_stroke_color
         self.eyeball_color_input = eyeball_color_input
         self.pupil_to_eye_rate = pupil_to_eye_rate
         self.pupil_color_input = pupil_color_input
@@ -62,14 +75,14 @@ class Eyes(VMobject):
         # eyes
         self.eye = Circle(color=self.eyeball_color_input,
                           fill_opacity=1,
-                          stroke_color=self.eyelid_color_input,
+                          stroke_color=WHITE,
                           radius=1)
 
         self.rimel = Circle(color=self.eyeball_color_input,
-                            fill_opacity=0,
-                            stroke_color=self.eyelid_color_input,
-                            stroke_width=self.eyelid_stroke_width,
-                            radius=1).set_z_index(3)
+                            fill_opacity=1,
+                            stroke_width=self.eyelid_stroke_width, #To avoid strange eye
+                            stroke_color=self.eyelid_stroke_color,
+                            radius=1).set_z_index(-3)
 
         self.pupil = Circle(color=self.pupil_color_input,
                             fill_opacity=1,
@@ -82,23 +95,23 @@ class Eyes(VMobject):
 
         self.eyelid = Circle(color=self.eyelid_color_input,
                              fill_opacity=0,
-                             stroke_color=self.eyelid_color_input,
                              stroke_width=self.eyelid_stroke_width,
+                             stroke_color=self.eyelid_stroke_color,
                              radius=1).move_to(self.eye.get_center()).set(z_index=2)  # for creature to blink!
 
         # This is extra, to make the creature close the eyes, but not completely, so it manages a suspicion or boredom look
         half_eyelid_up = Arc(angle=PI,
                              color=self.eyelid_color_input,
                              fill_opacity=0,
-                             stroke_color=self.eyelid_color_input,
                              stroke_width=self.eyelid_stroke_width,
+                             stroke_color=self.eyelid_stroke_color,
                              fill_color=self.eyelid_color_input).move_to(self.eye.get_corner(UP), aligned_edge=UP).set(z_index=4)
 
         half_eyelid_down = Arc(angle=-PI,
                                color=self.eyelid_color_input,
                                fill_opacity=0,
-                               stroke_color=self.eyelid_color_input,
                                stroke_width=self.eyelid_stroke_width,
+                               stroke_color=self.eyelid_stroke_color,
                                fill_color=self.eyelid_color_input).move_to(self.eye.get_corner(DOWN), aligned_edge=DOWN).set(z_index=4)
 
         self.sight = VGroup(self.pupil, self.reflection)  # The composite VGroup for creature to look at things!
@@ -178,20 +191,70 @@ class Eyes(VMobject):
             new_direction = direction
             print(new_direction)
 
-        return AnimationGroup(self.sight.animate(rate_func=rf, run_time=rt).shift(0.25*self.pupil_to_eye_rate*new_direction))
+        return AnimationGroup(self.sight.animate(rate_func=rf, run_time=rt).shift(0.2*self.pupil_to_eye_rate*new_direction))
 
     def bored(self,
-              rf: float=there_and_back_with_pause,
-              rt: float=3) -> Animation:
+              rf: float = there_and_back_with_pause,
+              rt: float = 3) -> Animation:
+        """
+        Method to make the :class:`Eyes` look bored/annoyed (upper eyelid appears and rolling eyes)
+
+        :param rf: Animation rate function. Defaults to :meth: `there_and_back_with_pause`.
+        :type rf: `func`
+
+        :param rt: Animation duration. Defaults to 3".
+        :type rt: float
+
+        :returns: The animation of bored/annoyed eyes.
+        :rtype: `Animation`
+
+        """
+
         return AnimationGroup(self.oculii[0][3:4].animate(rate_func=rf).set_opacity(1),
                               self.oculii[1][3:4].animate(rate_func=rf).set_opacity(1),
                               self.sight.animate(rate_func=rf).shift(0.05*UP), 
                               run_time=rt)
     def surprised(self,
-                 rf: float=there_and_back_with_pause,
-                 rt: float=3) -> Animation:
+                 rf: float = there_and_back_with_pause,
+                 rt: float = 3) -> Animation:
+        """
+        Method to make the :class:`Eyes` look surprised (pupils shrink)
+
+        :param rf: Animation rate function. Defaults to :meth: `there_and_back_with_pause`.
+        :type rf: `func`
+
+        :param rt: Animation duration. Defaults to 3".
+        :type rt: float
+
+        :returns: The animation of surprised eyes.
+        :rtype: `Animation`
+
+        """
+
         return  AnimationGroup(self.sight[0].animate(rate_func=rf, run_time=rt).scale(0.5),
                                self.sight[-1].animate(rate_func=rf, run_time=rt).scale(0.5),
+                               )
+    
+    def excited(self,
+                 rf: float = there_and_back_with_pause,
+                 rt: float = 3) -> Animation:
+        
+        """
+        Method to make the :class:`Eyes` look amused by something. (Pupils grow)
+
+        :param rf: Animation rate function. Defaults to :meth: `there_and_back_with_pause`.
+        :type rf: `func`
+
+        :param rt: Animation duration. Defaults to 3".
+        :type rt: float
+
+        :returns: The animation of excited eyes.
+        :rtype: `Animation`
+
+        """
+
+        return  AnimationGroup(self.sight[0].animate(rate_func=rf, run_time=rt).scale(1.2),
+                               self.sight[-1].animate(rate_func=rf, run_time=rt).scale(1.2),
                                )
     
 

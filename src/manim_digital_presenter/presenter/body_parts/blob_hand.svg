@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 200 200"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="blob_hand.svg"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="2.795"
+     inkscape:cx="100.35778"
+     inkscape:cy="99.821109"
+     inkscape:window-width="2048"
+     inkscape:window-height="1005"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg1" />
+  <path
+     fill="#24a148"
+     d="M 101.65437,40.078062 C 120.22026,51.474372 112.5202,125.12295 94.824927,132.59542 82.693523,130.97625 74.85755,102.49324 75.692998,84.096965 79.404607,64.567725 90.712683,38.520576 101.65437,40.078062 Z"
+     id="path1"
+     style="stroke-width:0.997133;stroke:#0000fb;stroke-opacity:1"
+     sodipodi:nodetypes="cccc" />
+</svg>
