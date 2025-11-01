@@ -128,8 +128,8 @@ class Creature(Eyes, VMobject):
 
 
         # Extra accessories
-        get_bulb_path = path.join(path.dirname(__file__), "body_parts/lightbulb.svg")
-        get_question_path = path.join(path.dirname(__file__), "body_parts/question_mark.svg")
+        get_bulb_path = path.join(path.dirname(__file__), "default_svgs/lightbulb.svg")
+        get_question_path = path.join(path.dirname(__file__), "default_svgs/question_mark.svg")
 
         self.question = SVGMobject(get_question_path).set_color(self.eyelid_color_input)
         self.question.scale(0.2).next_to(self.oculii, UP, buff=0.2)
@@ -211,8 +211,8 @@ class Creature(Eyes, VMobject):
         
         """
 
-        pointing_at, the_hand, the_shoulder, delta = self.get_position_and_hand(direction)
-        the_angle = self.angle_hand_rotation(the_hand, pointing_at)
+        pointing_at, the_hand, the_shoulder, delta = self._get_position_and_hand(direction)
+        the_angle = self._angle_hand_rotation(the_hand, pointing_at)
         
         return LaggedStart(
                 super().look_at(self.pupil_to_eye_rate*pointing_at),
@@ -363,8 +363,7 @@ class Creature(Eyes, VMobject):
 
                 
 
-    
-    def get_position_and_hand(self, input):
+    def _get_position_and_hand(self, input):
         """
         Method to select which hand the creature will move given an input.
 
@@ -383,7 +382,6 @@ class Creature(Eyes, VMobject):
         if isinstance(input, Mobject):
             vector = (input.get_center()-self.oculii.get_center())
             new_direction = vector/np.linalg.norm(vector)
-            print(np.array(new_direction))
         else:
             new_direction = input
 
@@ -401,7 +399,7 @@ class Creature(Eyes, VMobject):
 
     
      
-    def angle_hand_rotation(self, hand, look_vec):
+    def _angle_hand_rotation(self, hand, look_vec):
         """
         Method to determine the angle of rotation of the hand given a point where to look at.
 
@@ -418,7 +416,6 @@ class Creature(Eyes, VMobject):
         
         vec_hand = hand.get_corner(DOWN)-hand.get_corner(UP)
         norm_vec_hand = vec_hand/np.linalg.norm(vec_hand)
-        print(norm_vec_hand, look_vec)
         angle_rot = np.arccos((norm_vec_hand @ look_vec)/(np.linalg.norm(vec_hand)*np.linalg.norm(look_vec)))
         return angle_rot
 

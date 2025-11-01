@@ -75,7 +75,8 @@ class Eyes(VMobject):
         # eyes
         self.eye = Circle(color=self.eyeball_color_input,
                           fill_opacity=1,
-                          stroke_color=WHITE,
+                          stroke_color=BLACK,
+                          stroke_width=self.eyelid_stroke_width,
                           radius=1)
 
         self.rimel = Circle(color=self.eyeball_color_input,
@@ -124,6 +125,7 @@ class Eyes(VMobject):
         self.sight = always_redraw(lambda: VGroup(self.full_eye[-1], self.full_eye_2[-1]))
         self.oculii.move_to([0, 0, 0])
         self.add(self.oculii)
+        self.go_live()
         self.to_blink()  # self function to start the blinking of the eyes.
 
     def to_blink(self):
@@ -152,7 +154,7 @@ class Eyes(VMobject):
         window = time % 1
         if window < 0.2:
             if not self.blinking:
-                if random.random() < 0.2:
+                if random.random() < 0.1:
                     self.oculii[0][2].set_opacity(1)
                     self.oculii[1][2].set_opacity(1)
                     self.blinking = True
@@ -186,10 +188,9 @@ class Eyes(VMobject):
         if isinstance(direction, Mobject):
             vector = (direction.get_center()-self.oculii.get_center())
             new_direction = vector/np.linalg.norm(vector)
-            print(np.array(new_direction))
+
         else:
             new_direction = direction
-            print(new_direction)
 
         return AnimationGroup(self.sight.animate(rate_func=rf, run_time=rt).shift(0.2*self.pupil_to_eye_rate*new_direction))
 
@@ -256,6 +257,5 @@ class Eyes(VMobject):
         return  AnimationGroup(self.sight[0].animate(rate_func=rf, run_time=rt).scale(1.2),
                                self.sight[-1].animate(rate_func=rf, run_time=rt).scale(1.2),
                                )
-    
 
-                
+

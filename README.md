@@ -1,11 +1,16 @@
 # About Digital_presenter
 ---------------------------------------------------------------------
 
+Repository of Manim to create a digital companion to present your videos, slides, etc. You can animate it with simple commands in your Manim files!
 
-Repository of Manim to create a digital companion to present your videos, slides, etc. This creature can be manually animated calling some methods of the class. In addition, it can also be animated following a script, in the form of .csv or .txt file. This script will contain some text to be displayed on the screen. At the same time, it will contain a column with the action the creature will display. In this way, one can synchronise text and action for a more natural and fluid presentation.
+--[ADD IMAGE HERE]--
 
-The creature will be composed with a pair of eyes, a core and, optionally, a pair of hands. Each of this pieces can be animated to make the creature feel alive (see EXAMPLES for more information.)
+This animated creature can be used in two different ways:
 
+- You call it into your python script with `Creature` and animate with the inbuilt methods `Creature.animate_methods()` along the script of your video, slices, etc.
+- Alternatively, you can create a .csv file with two columns as animaton/dialogue. You can then use `script_sequencer` to iterate through each of the csv lines to animate your creature and the same time it "talks" in a dialogue box on the screen.
+
+(SEE documentation for further information)
 
 -----------------------------------------------------------------------
 
@@ -15,8 +20,6 @@ The creature will be composed with a pair of eyes, a core and, optionally, a pai
 -----------------------------------------------------------------------
 
 :warning: **Warning**
-
-[TO BE IMPROVED]
 
 - The package will be displayed in pip as **manim_digital_presenter**. This is also the way to import the package in the preamble of your python files. However, documentation and webpage will just keep the name as **digital_presenter** for simplicity.
 
@@ -53,8 +56,6 @@ from manim_digital_presenter import *
 
 # TO DO:
 
-- Fix eye_lid and rimmel thickness and strange issue going on there. [_]
-- Reestructure the animation class to be used with timeline. Add same animations as inbuilt methods of class Creature[_]
 - Reestructure how the textbox and similar objects are called through the script function. Better to define a set of classes? [_]
 - Create simple logo to add to github and webpage. [_]
 - To write down good docstrings for documentation. [_]
