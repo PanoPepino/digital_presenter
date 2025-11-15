@@ -125,10 +125,9 @@ class Eyes(VMobject):
         self.sight = always_redraw(lambda: VGroup(self.full_eye[-1], self.full_eye_2[-1]))
         self.oculii.move_to([0, 0, 0])
         self.add(self.oculii)
-        self.go_live()
-        self.to_blink()  # self function to start the blinking of the eyes.
+        self._to_blink()  # self function to start the blinking of the eyes.
 
-    def to_blink(self):
+    def _to_blink(self):
         """
         Method to make the eyes blink. It uses its own timer (nonlocal) to make the blinking. Its main feature is the counter "time" that increments independently and it is used in the following functions.
         """
@@ -140,11 +139,11 @@ class Eyes(VMobject):
         def living(mob, dt):
             nonlocal time
             time += dt
-            self.blink(time)
+            self._blink(time)
         dummy_element.add_updater(living)
         self.add(dummy_element)
 
-    def blink(self, time):
+    def _blink(self, time):
         """
         Conditional function. If a random number gets greater than some value, the creature will move its eyelid (i.e. will set opacity to them). Observe that has to be done to both eyelids separatly. Some issues with animation interaction.
         """
@@ -163,7 +162,8 @@ class Eyes(VMobject):
                 self.oculii[0][2].set_opacity(0)
                 self.oculii[1][2].set_opacity(0)
                 self.blinking = False
-
+        
+    # Animations for the eyes
     def look_at(self,
                 direction: list | Mobject,
                 rf: float=there_and_back_with_pause,

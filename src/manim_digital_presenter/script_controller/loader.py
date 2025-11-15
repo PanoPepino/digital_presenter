@@ -33,7 +33,7 @@ def load_csv_dialogue(csv_path: str,
     .. code-block:: python
 
        from manim_digital_presenter import *
-       actions, dialogue = load_csv_dialogue('your_paty/your_script.csv')
+       actions, dialogue = load_csv_dialogue('your_path/your_script.csv')
 
     The CSV file format should be::
 
@@ -45,6 +45,7 @@ def load_csv_dialogue(csv_path: str,
 
     actions = []
     dialogue = []
+    args = []
 
     try:
         with open(csv_path) as file_to_read:
@@ -52,19 +53,22 @@ def load_csv_dialogue(csv_path: str,
             for row in script:
                 if len(row) < 2:
                     raise ValueError(f"Row does not have 2 columns: {row}")
-                actions.append(row[0])
-                dialogue.append(row[1])
+                dialogue.append(row[0])
+                actions.append(row[1])
+                args.append(row[2])
+                
+                
     except FileNotFoundError:
         raise FileNotFoundError(f"CSV file not found at path: {csv_path}")
 
-    return actions, dialogue
+    return dialogue, actions, args
 
 def create_dialogue_tex(
     dialogue: list[str],
     tex_template: type = TexFontTemplates.comic_sans,
     tex_color: str = WHITE,
     font_size: int = 35,
-    position = None) -> list[VMobject]:
+    position = None) -> VGroup:
     """
     Convert a list of dialogue strings to Tex objects.
 
@@ -105,7 +109,7 @@ def create_dialogue_tex(
     Tex.set_default(tex_template=tex_template)
     Tex.set_default(color=tex_color)
 
-    tex_objects = [Tex(line, font_size=font_size) for line in dialogue]
+    tex_objects = VGroup(*[Tex(line, font_size=font_size) for line in dialogue])
 
     if position is not None:
         for tex in tex_objects:

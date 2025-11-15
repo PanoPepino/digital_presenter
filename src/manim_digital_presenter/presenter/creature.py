@@ -32,57 +32,10 @@ class Creature(Eyes, VMobject):
     :type hand: (Optional) :class:`Mobject` or None.
 
     :param shift_shoulder: Relative vertical position of the :param: anchor_opacity with respect to the creature body center (positive values will shift DOWN. Negative values will shift shoulder up)
-    :type shift_shoulder: float
+    :type shift_shoulder: float, optional
 
-    **Example usage:**
-
-    .. code-block:: python
-
-        from manim import *
-        from manim_digital_creature import *
-
-        class Creature_Test(Scene):
-            def construct(self):
-                self.camera.background_color = WHITE
-
-                # Test objects
-                point_1 = Dot(color=RED).to_corner(RIGHT)
-                point_2 = Dot(color=RED).move_to([5, 3, 0])
-                point_3 = Dot(color=GREEN).move_to([-4, -2, 0])
-                points = VGroup(point_1, point_2, point_3).set_z_index(-5)
-
-                positions = [LEFT, RIGHT, DOWN, UP, UL, UR, DL, DR]
-                # Creature body parts and definition
-                body = SVGMobject("svg_files/blob_body.svg")
-                lh = SVGMobject("svg_files/blob_hand.svg")
-                my_creature = Creature(eyelid_color_input=BLUE,
-                                       relative_eye_position=0.1,
-                                       eye_body_ratio=0.3,
-                                       hand_body_ratio=0.5,
-                                       anchor_opacity=0,
-                                       eyelid_stroke_color=DARK_BLUE,
-                                       eyelid_stroke_width=1,
-                                       core=body,
-                                       hand=lh,
-                                       eyes_distance=0.4,
-                                       shift_shoulder=0.4)
-                my_creature.to_corner(LEFT)
-
-                #  Animations
-                self.add(my_creature, points)
-                for position in positions:
-                    self.play(my_creature.look_at(position))
-                    self.wait()
-                for point in points:
-                    self.play(my_creature.point_at(point))
-
-                self.play(my_creature.surprise())
-                self.play(my_creature.thinking())
-                self.play(my_creature.have_idea())
-                self.play(my_creature.dont_know())
-
-
-
+    .. note::
+        You can find information on how to use this class in the main page of the `manimdigital-presenter` documentation.
 
     """
 
@@ -141,7 +94,6 @@ class Creature(Eyes, VMobject):
         
 
         # Loading creature
-
         if self.hand is not None:
             self.chosen_hand_ratio = self.hand_body_ratio*self.core.get_height()/self.hand.get_height()
             self.l_hand = self.hand.set(color=self.eyelid_color_input)
@@ -160,9 +112,9 @@ class Creature(Eyes, VMobject):
                   "-----------------------------")
             self.add(self.core, self.frown, self.l_shoulder, self.r_shoulder, self.question, self.bulb)
 
-        self.go_live() 
+        self._go_live() 
 
-    def go_live(self):
+    def _go_live(self):
         """
         Dummy function to make the creature alive. It uses its own timer to make the creature blink and any other passive changes on the creature (for example, one can adapt an updater to make the creature breath, or shine based on this dummy element)
         
@@ -174,19 +126,11 @@ class Creature(Eyes, VMobject):
         def living(mob, dt):
             nonlocal time
             time += dt
-            self.pulse(time)
         dummy_element.add_updater(living)
         self.add(dummy_element)
 
-    def pulse(self, time):
-        """
-        Obsolet function to use previous :meth:`go_live` and make the creature glow. It requires a glow mobject to iluminate.
-        """
 
-        # self.glow.set_opacity(1-0.6*np.cos(time)**2)
-        # This can perhaps be improved to make the whole creature levitate (oscillate around a point depending on a time parameter or any other time dependence)
-
-
+    # Animations for the creature
     def point_at(self,
                 direction: list | Mobject, # That bar allows for either class
                 rf: float = there_and_back_with_pause,
@@ -240,6 +184,9 @@ class Creature(Eyes, VMobject):
 
         .. note::
             This method will just move the eyes (and any other properties) if the creature has no hands.
+
+        .. warning::
+            This method is called surprise but it uses the :meth:`surprised` from :class:`Eyes` internally. That extra "d" is important!
         
         """
 
@@ -360,8 +307,7 @@ class Creature(Eyes, VMobject):
         else:
             return AnimationGroup(super().excited(),
                                   self.bulb.animate(run_time=rt, rate_func=rf).set_opacity(1))
-
-                
+             
 
     def _get_position_and_hand(self, input):
         """
