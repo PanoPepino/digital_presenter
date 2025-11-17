@@ -1,5 +1,7 @@
-Quick Guide
-=========
+How to use Guide
+=================
+
+.. _how_to_use_guide:
 
 This package comes equipped with different templates to homogenise the look of the slides.
 

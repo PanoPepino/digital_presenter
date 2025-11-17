@@ -3,14 +3,17 @@ import csv
 
 __all__ = ["load_csv_dialogue", "create_dialogue_tex"]
 
-def load_csv_dialogue(csv_path: str, 
+
+def load_csv_dialogue(csv_path: str,
                       delimiter: str = '/') -> tuple[list[str], list[str]]:
     """
-    Extract dialogue and actions from a CSV file.
+    Function to extract dialogue and actions from a CSV file.
 
-    This function reads a CSV file containing a script with two columns:
-    the first column contains action identifiers, and the second contains
-    dialogue text. Both are returned as separate lists.
+    This function reads a CSV file containing a script with three columns:
+
+    1. Dialogue text
+    2. Corresponding action
+    3. Additional arguments for the action (Leave empty if none for that action)
 
     :param csv_path: Path to the CSV file containing the script
     :type csv_path: str
@@ -20,13 +23,10 @@ def load_csv_dialogue(csv_path: str,
 
     :return: A tuple containing (actions, dialogue)
     :rtype: tuple[list[str], list[str]]
-    
+
     :raises FileNotFoundError: If the CSV file is not found at the specified path
     :raises ValueError: If any row has fewer than 2 columns
 
-    .. warning::
-       Do NOT include empty lines at the end of the CSV file.
-       Trailing empty rows will cause the function to fail.
 
     Example usage:
 
@@ -35,11 +35,12 @@ def load_csv_dialogue(csv_path: str,
        from manim_digital_presenter import *
        actions, dialogue = load_csv_dialogue('your_path/your_script.csv')
 
-    The CSV file format should be::
+    .. warning::
+        The CSV file format should be:
 
-        action_1/dialogue_1
-        action_2/dialogue_2
-        action_3/dialogue_3
+        - dialogue_1/action_1/arguments_1
+        - dialogue_2/action_2/arguments_2
+        - ...
 
     """
 
@@ -56,25 +57,25 @@ def load_csv_dialogue(csv_path: str,
                 dialogue.append(row[0])
                 actions.append(row[1])
                 args.append(row[2])
-                
-                
+
     except FileNotFoundError:
         raise FileNotFoundError(f"CSV file not found at path: {csv_path}")
 
     return dialogue, actions, args
 
+
 def create_dialogue_tex(
-    dialogue: list[str],
-    tex_template: type = TexFontTemplates.comic_sans,
-    tex_color: str = WHITE,
-    font_size: int = 35,
-    position = None) -> VGroup:
+        dialogue: list[str],
+        tex_template: type = TexFontTemplates.comic_sans,
+        tex_color: str = WHITE,
+        font_size: int = 35,
+        position=None) -> VGroup:
     """
     Convert a list of dialogue strings to Tex objects.
 
     :param dialogue: List of dialogue strings to convert to Tex objects
     :type dialogue: list[str]
-    
+
     :param tex_template: LaTeX template to use for rendering. Defaults to TexFontTemplates.comic_sans
     :type tex_template: type, optional
 

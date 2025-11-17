@@ -36,18 +36,18 @@ class Eyes(VMobject):
         from manim import *
         from manim_digital_creature import *
 
-        class Eye_Test(Scene):
+        class Eye_Example(Scene):
             def construct(self):
-                ojitos = Eyes(eyelid_color_input=BLUE, 
+                my_eyes = Eyes(eyelid_color_input=BLUE, 
                               eyes_distance=1).scale(0.5)
-                ojitos.move_to([0, 0, 0])
-                self.add(ojitos)
+                my_eyes.move_to([0, 0, 0])
+                self.add(my_eyes)
                 self.wait(3)
-                self.play(ojitos.look_at(UL))
-                self.play(ojitos.bored())
-                self.play(ojitos.surprised())
+                self.play(my_eyes.look_at(UL))
+                self.play(my_eyes.bored())
+                self.play(my_eyes.surprised())
                 self.wait(3)
-                self.play(ojitos.excited())
+                self.play(my_eyes.excited())
 
     """
 
@@ -81,7 +81,7 @@ class Eyes(VMobject):
 
         self.rimel = Circle(color=self.eyeball_color_input,
                             fill_opacity=1,
-                            stroke_width=self.eyelid_stroke_width, #To avoid strange eye
+                            stroke_width=self.eyelid_stroke_width,  # To avoid strange eye
                             stroke_color=self.eyelid_stroke_color,
                             radius=1).set_z_index(-3)
 
@@ -162,12 +162,12 @@ class Eyes(VMobject):
                 self.oculii[0][2].set_opacity(0)
                 self.oculii[1][2].set_opacity(0)
                 self.blinking = False
-        
+
     # Animations for the eyes
     def look_at(self,
                 direction: list | Mobject,
-                rf: float=there_and_back_with_pause,
-                rt: float=3) -> Animation:
+                rf: float = there_and_back_with_pause,
+                rt: float = 3) -> Animation:
         """
         Method to make the :class:`Eyes` look in a given direction. It will compute the normalised vector between the eyes of the creature and the object/direction to display a more realistic look.
 
@@ -213,11 +213,12 @@ class Eyes(VMobject):
 
         return AnimationGroup(self.oculii[0][3:4].animate(rate_func=rf).set_opacity(1),
                               self.oculii[1][3:4].animate(rate_func=rf).set_opacity(1),
-                              self.sight.animate(rate_func=rf).shift(0.05*UP), 
+                              self.sight.animate(rate_func=rf).shift(0.05*UP),
                               run_time=rt)
+
     def surprised(self,
-                 rf: float = there_and_back_with_pause,
-                 rt: float = 3) -> Animation:
+                  rf: float = there_and_back_with_pause,
+                  rt: float = 3) -> Animation:
         """
         Method to make the :class:`Eyes` look surprised (pupils shrink)
 
@@ -232,14 +233,13 @@ class Eyes(VMobject):
 
         """
 
-        return  AnimationGroup(self.sight[0].animate(rate_func=rf, run_time=rt).scale(0.5),
-                               self.sight[-1].animate(rate_func=rf, run_time=rt).scale(0.5),
-                               )
-    
+        return AnimationGroup(self.sight[0].animate(rate_func=rf, run_time=rt).scale(0.5),
+                              self.sight[-1].animate(rate_func=rf, run_time=rt).scale(0.5),
+                              )
+
     def excited(self,
-                 rf: float = there_and_back_with_pause,
-                 rt: float = 3) -> Animation:
-        
+                rf: float = there_and_back_with_pause,
+                rt: float = 3) -> Animation:
         """
         Method to make the :class:`Eyes` look amused by something. (Pupils grow)
 
@@ -254,8 +254,6 @@ class Eyes(VMobject):
 
         """
 
-        return  AnimationGroup(self.sight[0].animate(rate_func=rf, run_time=rt).scale(1.2),
-                               self.sight[-1].animate(rate_func=rf, run_time=rt).scale(1.2),
-                               )
-
-
+        return AnimationGroup(self.sight[0].animate(rate_func=rf, run_time=rt).scale(1.2),
+                              self.sight[-1].animate(rate_func=rf, run_time=rt).scale(1.2),
+                              )

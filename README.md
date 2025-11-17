@@ -56,7 +56,6 @@ from manim_digital_presenter import *
 
 # TO DO:
 
-- Reestructure how the textbox and similar objects are called through the script function. Better to define a set of classes? [_]
 - Create simple logo to add to github and webpage. [_]
 - To write down good docstrings for documentation. [_]
 - To create documentation and deploy in webpage. Use beanim-like structure. [_]

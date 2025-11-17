@@ -1,7 +1,8 @@
-manim_digital_presenter
-=======================
+Manim Digital Presenter Documentation
+=====================================
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
 
-   manim_digital_presenter
+   manim_digital_presenter.presenter
+   manim_digital_presenter.script_controller

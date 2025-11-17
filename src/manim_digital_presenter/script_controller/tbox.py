@@ -3,6 +3,7 @@ import csv
 
 __all__ = ["Text_Box"]
 
+
 class Text_Box(VGroup):
     """
     A simple rectangle UI element representing a dialogue box.
@@ -35,29 +36,32 @@ class Text_Box(VGroup):
 
     .. code-block:: python
 
-       # Create with custom colors and size
-       custom_box = Text_Box(
-           width=10,
-           height=3,
-           box_fill_color=RED,
-           triangle_color=YELLOW,
-           box_position="DL"
-       )
-       scene.add(custom_box)
+         from manim import *
+         from manim_digital_presenter import *
+         class Text_Box_Example(Scene):
+             def construct(self):
+                custom_box = Text_Box(
+                    width=10,
+                    height=3,
+                    box_fill_color=RED,
+                    triangle_color=YELLOW,
+                    box_position="DL"
+                )
+                self.add(custom_box)
 
     """
 
     def __init__(
-        self,
-        width: float = None,
-        height: float = None,
-        box_fill_color: list | str = [DARK_BLUE, BLACK],
-        box_fill_opacity: float = 0.1,
-        box_color: str = DARK_BLUE,
-        box_position: list = DR,
-        box_buff: float = 0.1,
-        corner_box: float = 0.2,
-        **kwargs):
+            self,
+            width: float = None,
+            height: float = None,
+            box_fill_color: list | str = [DARK_BLUE, BLACK],
+            box_fill_opacity: float = 0.1,
+            box_color: str = DARK_BLUE,
+            box_position: list = DR,
+            box_buff: float = 0.1,
+            corner_box: float = 0.2,
+            **kwargs):
         super().__init__(**kwargs)
 
         if width is None:
@@ -76,6 +80,3 @@ class Text_Box(VGroup):
         self.box.to_corner(box_position, buff=box_buff)
         self.box.set_sheen_direction(0.5 * DOWN)
         self.add(self.box)
-
-
-
