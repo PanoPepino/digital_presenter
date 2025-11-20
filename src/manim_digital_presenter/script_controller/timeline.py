@@ -12,17 +12,17 @@ def play_timeline(scene, timeline):
 
     .. code-block:: python
 
-        from manim import *
-        from manim_digital_creature import *
+       ...
 
-        class Timeline_Example(Scene):
-            def construct(self):
-                timeline = {
-                    0: Create(square, run_time=2),              # Animation class
-                    1: circle.animate.shift(UP * 2),             # animate syntax
-                    2: [square.animate.rotate(PI/2),             # Multiple animations
-                        text.animate.set_color(YELLOW)]}
-                play_timeline(self, timeline)
+        timeline = {
+            0: Create(square, run_time=2),              # Animation class
+            1: circle.animate.shift(UP * 2),             # animate syntax
+            2: [square.animate.rotate(PI/2),             # Multiple animations
+                text.animate.set_color(YELLOW)]
+        }
+
+        play_timeline(self, timeline)
+        self.wait(2)
 
     """
 

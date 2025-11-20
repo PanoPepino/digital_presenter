@@ -1,16 +1,18 @@
 # About Digital_presenter
----------------------------------------------------------------------
+-------------------------
+
+<img src="docs/_static/media/logo.svg" alt="digital_presenter_logo" width="200">
 
 Repository of Manim to create a digital companion to present your videos, slides, etc. You can animate it with simple commands in your Manim files!
 
---[ADD IMAGE HERE]--
+<video controls src="docs/_static/media/videos/Logo_Demo.mp4" title="Logo_Demo"></video>
 
 This animated creature can be used in two different ways:
 
 - You call it into your python script with `Creature` and animate with the inbuilt methods `Creature.animate_methods()` along the script of your video, slices, etc.
 - Alternatively, you can create a .csv file with two columns as animaton/dialogue. You can then use `script_sequencer` to iterate through each of the csv lines to animate your creature and the same time it "talks" in a dialogue box on the screen.
 
-(SEE documentation for further information)
+(See documentation for further information)
 
 -----------------------------------------------------------------------
 
@@ -29,7 +31,7 @@ This animated creature can be used in two different ways:
 
 - Here you can see a demo:
 
-https://github.com/PanoPepino/digital_presenter/assets/106378545/485839cf-4118-4f7c-86d0-20bcb2fefef4
+<video controls src="docs/_static/media/videos/Basics_Demo.mp4" title="Basic_Demo"></video>
 
 - A more advanced example can be found in: https://www.youtube.com/watch?v=MEuX53M5mBU&list=PL7qJnArvRQzHci5IAHRqCuS2eF4_baHTR
 
@@ -56,8 +58,10 @@ from manim_digital_presenter import *
 
 # TO DO:
 
-- Create simple logo to add to github and webpage. [_]
-- To write down good docstrings for documentation. [_]
-- To create documentation and deploy in webpage. Use beanim-like structure. [_]
+- If Mods say there is legal issue, fix logo (Substitute Manim for Digital Presenter). [_]
+- Create + Add video and code for Timeline + Script Example [_]
+- Create explanation slide [_]
+- Add donation stuff to documentation and github [_]
+
 
 

@@ -7,7 +7,21 @@ With very simple commands, you will be able to animate a character that will gui
 
 This is a simple example of what can be done with this package:
 
-(THINK HOW TO ADD A VIDEO HERE)
+.. raw:: html
+
+   <div style="text-align: center;">
+     <video
+        src="_static/media/videos/Logo_Demo.mp4"
+        autoplay
+        loop
+        muted
+        playsinline
+        controls
+        style="max-width: 100%; height: auto;">
+       Your browser does not support the video tag.
+     </video>
+   </div>
+
 
 
 First Steps
@@ -19,10 +33,10 @@ If you want to install the package, please follow the instructions in :doc:`inst
 
 After installation, you can find the most straightforward explanation of the basic features of this package in :doc:`how_to_use`.
 
-More Advanced Examples
+Advanced Examples
 ----------------------
 
-The following `Youtube playlist <https://www.youtube.com/watch?v=MEuX53M5mBU&list=PL7qJnArvRQzHci5IAHRqCuS2eF4_baHTR>`_ correspond to a series of videos prepared with a rudimentary version of this package. However, they can give you an idea of the kind of animations you can create with it.
+The following `Youtube playlist <https://www.youtube.com/watch?v=MEuX53M5mBU&list=PL7qJnArvRQzHci5IAHRqCuS2eF4_baHTR>`_ correspond to a series of videos prepared with a rudimentary version of this package. However, they can give you an idea of the kind of animations you can create with it. You can also find more convoluted pieces of code in :doc:`examples`.
 
 .. note::
     Note that the previous videos correspond to an older version of the package, so some things may have changed. (Syntaxis and package structure are way more straightforward and clean now!!)
@@ -44,7 +58,7 @@ If you want more detailed explanations, see :doc:`how_to_use` and the :doc:`api/
    
 .. note::
 
-   I would like to thank Abulafia (the creator of the `timeline <https://github.com/abul4fia/manim-play-timeline> _` Manim plugging) and Uwezi (and all the `Manim CE Discord <https://discord.gg/nfJXC2qh>`_ by extension) for unvaluable help when I was crafting this package.
+   I would like to thank Abulafia (the creator of the `timeline <https://github.com/abul4fia/manim-play-timeline>`_ Manim plugging) and Uwezi (and all the `Manim CE Discord <https://discord.gg/nfJXC2qh>`_ by extension) for unvaluable help when I was crafting this package.
 
 
 .. toctree::
@@ -53,6 +67,7 @@ If you want more detailed explanations, see :doc:`how_to_use` and the :doc:`api/
 
    installation
    how_to_use
+   examples
    api/modules
    
    

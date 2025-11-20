@@ -2,6 +2,7 @@ from ..my_imports import *
 from .eyes import *
 
 
+
 __all__ = ["Creature"]
 
 
@@ -16,8 +17,8 @@ class Creature(Eyes, VMobject):
     :param hand_body_ratio: Ratio of hand size relative to the body. Defaults to 0.5.
     :type hand_body_ratio: float
 
-    :param relative_eye_position: Relative vertical positioning of the eyes. Defaults to -0.2.
-    :type relative_eye_position: float
+    :param relative_eye_position: Vector for positioning the eyes relative to the body's top center. Defaults to [0, -0.2, 0] (slightly down from top).
+    :type relative_eye_position: list[float] | np.ndarray
 
     :param anchor_opacity: Opacity of the anchor (joint) dots. Defaults to 0.
     :type anchor_opacity: float
@@ -35,17 +36,17 @@ class Creature(Eyes, VMobject):
     :type shift_shoulder: float, optional
 
     .. note::
-        You can find more information in the page :ref:`how_to_use_guide`.
+        You can find information on how to use this class in the main page of the `manimdigital-presenter` documentation.
 
     """
 
     def __init__(self,
                  eye_body_ratio: float = 0.6,
                  hand_body_ratio: float = 0.5,
-                 relative_eye_position: float = -0.2,
+                 relative_eye_position: list | np.ndarray = None,
                  anchor_opacity: float = 0,
                  anchor_color: ParsableManimColor = RED,
-                 core: Mobject = Mobject(),
+                 core: Mobject = None,
                  hand: Mobject = None,
                  shift_shoulder: float = 0,
                  **kwargs):
@@ -53,7 +54,15 @@ class Creature(Eyes, VMobject):
         super().__init__(**kwargs)
         self.eye_body_ratio = eye_body_ratio
         self.hand_body_ratio = hand_body_ratio
-        self.relative_eye_position = relative_eye_position
+        
+        # Convert relative_eye_position to a vector (default: slightly down from top)
+        if relative_eye_position is None:
+            self.relative_eye_position = np.array([0, -0.2, 0])
+        elif isinstance(relative_eye_position, (list, tuple)):
+            self.relative_eye_position = np.array(relative_eye_position)
+        else:
+            self.relative_eye_position = relative_eye_position
+            
         self.anchor_opacity = anchor_opacity
         self.anchor_color = anchor_color
         self.hand = hand
@@ -63,21 +72,39 @@ class Creature(Eyes, VMobject):
         # Set fill opacity to see the joints of the creature.
         Dot().set_default(color=self.anchor_color, fill_opacity=self.anchor_opacity)
 
-        # Eyes
-        self.frown = Dot().next_to(self.core.get_corner(UP), UP, buff=self.relative_eye_position).set_z_index(10)
-        self.oculii.move_to(self.frown.get_center())
-        self.chosen_eye_ratio = self.eye_body_ratio*self.core.get_height()/self.oculii.get_height()
-        self.oculii.scale(self.chosen_eye_ratio)
+        # Body Load default SVG files if core not provided
+        if core is None:
+            get_body_path = path.join(path.dirname(__file__), "default_svgs/default_body.svg")
+            self.core = SVGMobject(get_body_path)
+        else:
+            self.core = core        
 
-        # Body
-        self.core.set(color=self.eyelid_color_input,
-                      stroke_color=self.eyelid_stroke_color,
+        self.core.set(color=self.eyelid_color_input, 
+                      stroke_color=self.eyelid_stroke_color, 
                       stroke_width=self.eyelid_stroke_width)
         self.core.set_z_index(-3)
 
         # Hands
+        if hand is None and core is None:
+            get_hand_path = path.join(path.dirname(__file__), "default_svgs/default_hand.svg")
+            self.hand = SVGMobject(get_hand_path)
+        else:
+            self.hand = hand
+
         self.l_shoulder = Dot().next_to(self.core.get_corner(LEFT), LEFT+self.shift_shoulder*DOWN, buff=0.05).set_z_index(10)
         self.r_shoulder = Dot().next_to(self.core.get_corner(RIGHT), RIGHT+self.shift_shoulder*DOWN, buff=0.05).set_z_index(10)
+
+        # Eyes - Now using vector-based positioning
+        # Create anchor point at the top center of the body
+        body_top_center = self.core.get_corner(UP)
+        
+        # Position the frown at top center + relative_eye_position vector
+        self.frown = Dot().move_to(body_top_center + self.relative_eye_position).set_z_index(10)
+        
+        # Position the eyes at the frown location
+        self.oculii.move_to(self.frown.get_center())
+        self.chosen_eye_ratio = self.eye_body_ratio*self.core.get_height()/self.oculii.get_height()
+        self.oculii.scale(self.chosen_eye_ratio)
 
         # Extra accessories
         get_bulb_path = path.join(path.dirname(__file__), "default_svgs/lightbulb.svg")
@@ -90,19 +117,18 @@ class Creature(Eyes, VMobject):
         self.bulb = SVGMobject(get_bulb_path)
         self.bulb.scale(0.3).next_to(self.oculii, UP, buff=0.2)
         self.bulb.set_opacity(0)
-
+        
         # Loading creature
-        if self.hand is not None:
+        if self.hand:
             self.chosen_hand_ratio = self.hand_body_ratio*self.core.get_height()/self.hand.get_height()
             self.l_hand = self.hand.set(color=self.eyelid_color_input)
-            self.l_hand.set(color=self.eyelid_color_input,
-                            stroke_color=self.eyelid_stroke_color,
-                            stroke_width=self.eyelid_stroke_width)
+            self.l_hand.set(color=self.eyelid_color_input, 
+                                      stroke_color=self.eyelid_stroke_color, 
+                                      stroke_width=self.eyelid_stroke_width)
             self.l_hand.scale(self.chosen_hand_ratio).next_to(self.l_shoulder, DOWN, aligned_edge=UP, buff=0.1)
             self.r_hand = self.l_hand.copy().flip().next_to(self.r_shoulder, DOWN, aligned_edge=UP, buff=0.1)
 
-            self.add(self.core, self.frown, self.l_shoulder, self.r_shoulder,
-                     self.l_hand, self.r_hand, self.question, self.bulb)
+            self.add(self.core, self.frown, self.l_shoulder, self.r_shoulder, self.l_hand, self.r_hand, self.question, self.bulb)
 
         else:
             print("---------- Warning ----------\n",
@@ -111,13 +137,12 @@ class Creature(Eyes, VMobject):
                   "-----------------------------")
             self.add(self.core, self.frown, self.l_shoulder, self.r_shoulder, self.question, self.bulb)
 
-        self._go_live()
+        self._go_live() 
 
     def _go_live(self):
         """
-        Dummy function to make the creature alive. It uses its own timer to make the creature blink and any other passive changes on the creature 
-        (for example, one can adapt an updater to make the creature breath, or shine based on this dummy element)
-
+        Dummy function to make the creature alive. It uses its own timer to make the creature blink and any other passive changes on the creature (for example, one can adapt an updater to make the creature breath, or shine based on this dummy element)
+        
         """
 
         time = 0
@@ -130,14 +155,12 @@ class Creature(Eyes, VMobject):
         self.add(dummy_element)
 
     # Animations for the creature
-
     def point_at(self,
-                 direction: list | Mobject,  # That bar allows for either class
-                 rf: float = there_and_back_with_pause,
-                 rt: float = 3) -> Animation:
+                direction: list | Mobject, # That bar allows for either class
+                rf: float = there_and_back_with_pause,
+                rt: float = 3) -> Animation:   
         """
-        Method to make the creature point to any direction or object in the screen. It makes use of :meth:`get_position_and_hand` and :meth:`angle_hand_rotation` 
-        to determine which hand and the direction in which this will point to.
+        Method to make the creature point to any direction or object in the screen. It makes use of :meth:`get_position_and_hand` and :meth:`angle_hand_rotation` to determine which hand and the direction in which this will point to.
 
         :param direction: The direction or object to point to.
         :type direction: np.array | Mobject
@@ -153,29 +176,29 @@ class Creature(Eyes, VMobject):
 
         .. note::
             This method will not be valid for a creature without hands.
-
+        
         """
 
         pointing_at, the_hand, the_shoulder, delta = self._get_position_and_hand(direction)
         the_angle = self._angle_hand_rotation(the_hand, pointing_at)
-
+        
         return LaggedStart(
-            super().look_at(self.pupil_to_eye_rate*pointing_at),
-            Rotate(mobject=the_hand,
-                   angle=(1-2*delta)*(the_angle),
-                   about_point=the_shoulder.get_center(),
-                   rate_func=rf,
-                   run_time=rt),
-            lag_ratio=0.1)
-
+                super().look_at(self.pupil_to_eye_rate*pointing_at),
+                    Rotate(mobject=the_hand, 
+                           angle=(1-2*delta)*(the_angle), 
+                           about_point=the_shoulder.get_center(), 
+                           rate_func=rf, 
+                           run_time=rt),
+                           lag_ratio=0.1)
+    
     def surprise(self,
-                 rf: float = there_and_back_with_pause,
-                 rt: float = 3) -> Animation:
+                  rf: float = there_and_back_with_pause,
+                  rt: float = 3) -> Animation:
         """
         Method to make the creature look surprised. It takes the :meth:`surprised` from :class:`Eyes` and add the hands covering the "mouth" of the creature.
 
         :param rf: The rate function at which it will do it. Defaults to :func:`there_and_back_with_pause`.
-        :type rf: func
+        :type rf:`func`
 
         :param rt: run_time of the animation. Defaults to 3".
         :type rt: float
@@ -187,23 +210,23 @@ class Creature(Eyes, VMobject):
             This method will just move the eyes (and any other properties) if the creature has no hands.
 
         .. warning::
-            This method is called :meth:`surprise` but it uses the :meth:`surprised` from :class:`Eyes` internally. That extra "d" is important!
-
+            This method is called surprise but it uses the :meth:`surprised` from :class:`Eyes` internally. That extra "d" is important!
+        
         """
 
         if self.hand:
             return AnimationGroup(
-                super().surprised(),  # This is to invoque the animation of the eyes.
-                Rotate(mobject=self.l_hand,
-                       angle=(0.6*PI),
-                       about_point=self.l_shoulder.get_center(),
-                       rate_func=rf,
-                       run_time=rt),
-                Rotate(mobject=self.r_hand,
-                       angle=-(0.6*PI),
-                       about_point=self.r_shoulder.get_center(),
-                       rate_func=rf,
-                       run_time=rt))
+                    super().surprised(), #This is to invoque the animation of the eyes.
+                        Rotate(mobject=self.l_hand, 
+                               angle=(0.6*PI), 
+                               about_point=self.l_shoulder.get_center(), 
+                               rate_func=rf, 
+                               run_time=rt),
+                        Rotate(mobject=self.r_hand, 
+                               angle=-(0.6*PI), 
+                               about_point=self.r_shoulder.get_center(), 
+                               rate_func=rf, 
+                               run_time=rt))
         else:
             return AnimationGroup(super().surprised())
 
@@ -211,7 +234,7 @@ class Creature(Eyes, VMobject):
                  rf: float = there_and_back_with_pause,
                  rt: float = 3) -> Animation:
         """
-        Method to make the creature think. A question mark will appear on top of its eyes.
+        Method to make the creature think. A question mark will appear on top of its eyes
 
         :param rf: The rate function at which it will do it. Defaults to :func:`there_and_back_with_pause`.
         :type rf: func
@@ -229,22 +252,21 @@ class Creature(Eyes, VMobject):
 
         if self.hand:
             return AnimationGroup(
-                super().look_at(self.pupil_to_eye_rate*UP),
-                self.question.animate(run_time=rt, rate_func=rf).set_opacity(1),
-                Rotate(mobject=self.l_hand,
-                       angle=(0.6*PI),
-                       about_point=self.l_shoulder.get_center(),
-                       rate_func=rf,
-                       run_time=rt)
-            )
+                    super().look_at(self.pupil_to_eye_rate*UP),
+                    self.question.animate(run_time=rt, rate_func=rf).set_opacity(1),
+                    Rotate(mobject=self.l_hand, 
+                               angle=(0.6*PI), 
+                               about_point=self.l_shoulder.get_center(), 
+                               rate_func=rf, 
+                               run_time=rt))
         else:
             return AnimationGroup(
-                super().look_at(self.pupil_to_eye_rate*UP),
-                self.question.animate(run_time=rt, rate_func=rf).set_opacity(1))
-
+                    super().look_at(self.pupil_to_eye_rate*UP),
+                    self.question.animate(run_time=rt, rate_func=rf).set_opacity(1))
+  
     def dont_know(self,
-                  rf: float = there_and_back_with_pause,
-                  rt: float = 3) -> Animation:
+                 rf: float = there_and_back_with_pause,
+                 rt: float = 3) -> Animation:
         """
         Method to make the creature look hesitant, including a shoulder shrug.
 
@@ -264,17 +286,18 @@ class Creature(Eyes, VMobject):
 
         if self.hand:
             return AnimationGroup(
-                super().look_at(self.pupil_to_eye_rate*UP),
-                self.l_hand.animate(run_time=rt, rate_func=rf).shift(0.2*UP),
-                self.r_hand.animate(run_time=rt, rate_func=rf).shift(0.2*UP)
-            )
+                    super().look_at(self.pupil_to_eye_rate*UP),
+                    self.l_hand.animate(run_time=rt, rate_func=rf).shift(0.2*UP),
+                    self.r_hand.animate(run_time=rt, rate_func=rf).shift(0.2*UP)
+                    )
         else:
             return AnimationGroup(
-                super().look_at(self.pupil_to_eye_rate*UP))
-
+                    super().look_at(self.pupil_to_eye_rate*UP))
+    
     def have_idea(self,
-                  rf: float = there_and_back_with_pause,
-                  rt: float = 3) -> Animation:
+                 rf: float = there_and_back_with_pause,
+                 rt: float = 3) -> Animation:
+        
         """
         Method to make the creature have an Eureka moment.
 
@@ -294,21 +317,59 @@ class Creature(Eyes, VMobject):
 
         if self.hand:
             return AnimationGroup(
-                super().excited(),
-                self.bulb.animate(run_time=rt, rate_func=rf).set_opacity(1),
-                Rotate(mobject=self.r_hand,
-                       angle=(0.9*PI),
-                       about_point=self.r_shoulder.get_center(),
-                       rate_func=rf,
-                       run_time=rt)
-            )
+                    super().excited(),
+                    self.bulb.animate(run_time=rt, rate_func=rf).set_opacity(1),
+                    Rotate(mobject=self.r_hand, 
+                               angle=(0.9*PI), 
+                               about_point=self.r_shoulder.get_center(), 
+                               rate_func=rf, 
+                               run_time=rt)
+                    )
         else:
             return AnimationGroup(super().excited(),
                                   self.bulb.animate(run_time=rt, rate_func=rf).set_opacity(1))
+        
+    def happy(self,
+                 rf: float = there_and_back_with_pause,
+                 rt: float = 3) -> Animation:
+        
+        """
+        Method to make the creature look happy.
 
+        :param rf: The rate function at which it will do it. Defaults to :func:`there_and_back_with_pause`.
+        :type rf: func
+
+        :param rt: run_time of the animation. Defaults to 3".
+        :type rt: float
+
+        :return: The have_idea animation.
+        :rtype: :class:`Animation`
+
+        .. note::
+            This method will just close the eyes (and any other properties) if the creature has no hands.
+
+        """
+
+        if self.hand:
+            return AnimationGroup(
+                    super().joy(),
+                    Rotate(mobject=self.r_hand, 
+                               angle=(0.7*PI), 
+                               about_point=self.r_shoulder.get_center(), 
+                               rate_func=rf, 
+                               run_time=rt),
+                    Rotate(mobject=self.l_hand, 
+                               angle=(-0.7*PI), 
+                               about_point=self.l_shoulder.get_center(), 
+                               rate_func=rf, 
+                               run_time=rt)
+                    )
+        else:
+            return AnimationGroup(super().joy())
+             
     def _get_position_and_hand(self, input):
         """
-        Method to select which hand the creature will move given an input.
+        Internal method to select which hand the creature will move given an input.
 
         :param input: The direction or object the creature will be looking at.
         :type input: list | Mobject
@@ -329,20 +390,20 @@ class Creature(Eyes, VMobject):
             new_direction = input
 
         if new_direction[0] > 0:
-            print("greater")
+            #print("greater")
             chosen_hand = self.r_hand
             chosen_shoulder = self.r_shoulder
             delta_func = 0
         else:
-            print("smaller")
+            #print("smaller")
             chosen_hand = self.l_hand
             chosen_shoulder = self.l_shoulder
-            delta_func = 1
+            delta_func= 1
         return np.array(new_direction), chosen_hand, chosen_shoulder, delta_func
-
+    
     def _angle_hand_rotation(self, hand, look_vec):
         """
-        Method to determine the angle of rotation of the hand given a point where to look at.
+        Internal method to determine the angle of rotation of the hand given a point where to look at.
 
         :param hand: The hand to be moved.
         :type hand: Mobject.

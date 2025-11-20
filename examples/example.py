@@ -14,6 +14,7 @@ class Eye_Test(Scene):
         self.play(ojitos.look_at(UL))
         self.play(ojitos.bored())
         self.play(ojitos.surprised())
+        self.play(ojitos.joy())
         self.wait(3)
 
 
@@ -29,14 +30,14 @@ class Creature_Hands_Test(Scene):
         positions = [LEFT, RIGHT, DOWN, UP, UL, UR, DL, DR]
         # Creature body parts and definition
 
-        my_creature = Creature(eyelid_color_input=YELLOW,
-                               relative_eye_position=-0.3,
+        my_creature = Creature(eyelid_color_input=BLUE,
+                               relative_eye_position=0.1,
                                eye_body_ratio=0.3,
                                hand_body_ratio=0.5,
                                anchor_opacity=0,
                                eyelid_stroke_color=BLACK,
                                eyelid_stroke_width=1,
-                               eyes_distance=0.4,
+                               eyes_distance=+0.4,
                                shift_shoulder=4)
 
         #  Animations
@@ -51,6 +52,7 @@ class Creature_Hands_Test(Scene):
         self.play(my_creature.thinking())
         self.play(my_creature.have_idea())
         self.play(my_creature.dont_know())
+        self.play(my_creature.happy())
         self.wait(2)
 
 
@@ -66,7 +68,7 @@ class Creature_Letter_Test(Scene):
         # Creature body parts and definition
         body = Tex("$\\Sigma$", font_size=250, color=ORANGE)
         my_creature = Creature(eyelid_color_input=ORANGE,
-                               relative_eye_position=-0.2,
+                               relative_eye_position=[0.2, 0.1, 0],
                                eye_body_ratio=0.3,
                                anchor_opacity=0,
                                eyelid_stroke_color=BLACK,
@@ -93,7 +95,7 @@ class Timeline_Test(Scene):
         # Creature body parts and definition
         body = Tex("$\\Sigma$", font_size=250, color=ORANGE)
         my_creature = Creature(eyelid_color_input=ORANGE,
-                               relative_eye_position=-0.2,
+                               relative_eye_position=[0.2, -0.1, 0],
                                eye_body_ratio=0.3,
                                anchor_opacity=0,
                                eyelid_stroke_color=BLACK,
@@ -122,9 +124,12 @@ class Timeline_Test(Scene):
             27: my_creature.animate.rotate(PI/2),
             30: [
                 my_creature.animate.move_to(ORIGIN),
-                Uncreate(point_1, point_2, point_3)
+                FadeOut(VGroup(point_1, point_2, point_3)),
+                FadeOut(my_creature)
             ]
         }
+
+        # Running Timeline
         play_timeline(self, timeline)
         self.wait(2)
 

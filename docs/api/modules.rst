@@ -1,5 +1,5 @@
-Manim Digital Presenter Documentation
-=====================================
+Documentation
+=============
 
 .. toctree::
    :maxdepth: 2

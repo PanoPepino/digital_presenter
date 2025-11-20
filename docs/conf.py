@@ -53,7 +53,7 @@ pygments_style = 'sphinx'
 nitpicky = False
 
 html_static_path = ['_static']
-# html_logo = "_static/media/slide.svg"
+html_logo = "_static/media/logo.svg"
 
 
 # -- Options for HTML output -------------------------------------------------
