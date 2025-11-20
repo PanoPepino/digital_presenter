@@ -1,11 +1,11 @@
-# About Digital_presenter
--------------------------
-
-<img src="docs/_static/media/logo.svg" alt="digital_presenter_logo" width="200">
+# About Digital_presenter <img src="docs/_static/media/logo.svg" alt="digital_presenter_logo" width="100">
+----------------------------------------------------------------------------------------------------------
 
 Repository of Manim to create a digital companion to present your videos, slides, etc. You can animate it with simple commands in your Manim files!
 
-<video controls src="docs/_static/media/videos/Logo_Demo.mp4" title="Logo_Demo"></video>
+<video src="docs/_static/media/videos/Logo_Demo.mp4" controls loop muted>
+</video>
+
 
 This animated creature can be used in two different ways:
 
@@ -31,9 +31,14 @@ This animated creature can be used in two different ways:
 
 - Here you can see a demo:
 
-<video controls src="docs/_static/media/videos/Basics_Demo.mp4" title="Basic_Demo"></video>
+<video src="docs/_static/media/videos/Basics_Demo.mp4" controls loop muted>
+</video>
 
-- A more advanced example can be found in: https://www.youtube.com/watch?v=MEuX53M5mBU&list=PL7qJnArvRQzHci5IAHRqCuS2eF4_baHTR
+
+- A more advanced example can be found in: 
+
+<video src="https://www.youtube.com/watch?v=MEuX53M5mBU&list=PL7qJnArvRQzHci5IAHRqCuS2eF4_baHTR" controls>
+</video>
 
 -----------------------------------------------------------------------
 
