@@ -17,9 +17,7 @@
 Digital Presenter is a Manim library that allows you to create animated creatures as digital companions for your videos, slides, and presentations. Animate them with simple commands directly in your Manim scripts!
 
 <div align="center">
-  <video width="700" controls loop autoplay muted>
-    <source src="docs/_static/media/videos/Logo_Demo.mp4" type="video/mp4">
-  </video>
+  <img src="docs/_static/media/videos/Logo_Demo.gif" alt="Digital Presenter Demo" width="700" />
 </div>
 
 
@@ -39,10 +37,9 @@ Digital Presenter offers two flexible ways to animate your companion:
 See the [documentation](https://panopepino.github.io/digital_presenter/) for the complete code of previous animation.
 
 <div align="center">
-  <video width="700" controls loop autoplay muted>
-    <source src="docs/_static/media/videos/Basics_Demo.mp4" type="video/mp4">
-  </video>
+  <img src="docs/_static/media/videos/Basics_Demo.gif" alt="Basics Demo" width="700" />
 </div>
+
 
 
 
