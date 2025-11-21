@@ -3,7 +3,8 @@ import csv
 
 __all__ = ["load_csv_dialogue", "create_dialogue_tex"]
 
-def load_csv_dialogue(csv_path: str, 
+
+def load_csv_dialogue(csv_path: str,
                       delimiter: str = '/') -> tuple[list[str], list[str]]:
     """
     Extract dialogue and actions from a CSV file.
@@ -20,7 +21,7 @@ def load_csv_dialogue(csv_path: str,
 
     :return: A tuple containing (actions, dialogue)
     :rtype: tuple[list[str], list[str]]
-    
+
     :raises FileNotFoundError: If the CSV file is not found at the specified path
     :raises ValueError: If any row has fewer than 2 columns
 
@@ -37,9 +38,12 @@ def load_csv_dialogue(csv_path: str,
 
     The CSV file format should be::
 
-        action_1/dialogue_1
-        action_2/dialogue_2
-        action_3/dialogue_3
+        sentence_1/action_1/arg_1
+        sentence_2/action_2/arg_2
+        sentence_3/action_3/arg_3
+
+    .. note::
+        The argument (arg) can be empty in the csv. Not all methods of the :class:`Creature` require arguments to pass.
 
     """
 
@@ -56,25 +60,25 @@ def load_csv_dialogue(csv_path: str,
                 dialogue.append(row[0])
                 actions.append(row[1])
                 args.append(row[2])
-                
-                
+
     except FileNotFoundError:
         raise FileNotFoundError(f"CSV file not found at path: {csv_path}")
 
     return dialogue, actions, args
 
+
 def create_dialogue_tex(
-    dialogue: list[str],
-    tex_template: type = TexFontTemplates.comic_sans,
-    tex_color: str = WHITE,
-    font_size: int = 35,
-    position = None) -> VGroup:
+        dialogue: list[str],
+        tex_template: type = TexFontTemplates.comic_sans,
+        tex_color: str = WHITE,
+        font_size: int = 35,
+        position=None) -> VGroup:
     """
     Convert a list of dialogue strings to Tex objects.
 
     :param dialogue: List of dialogue strings to convert to Tex objects
     :type dialogue: list[str]
-    
+
     :param tex_template: LaTeX template to use for rendering. Defaults to TexFontTemplates.comic_sans
     :type tex_template: type, optional
 

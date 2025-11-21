@@ -1,46 +1,55 @@
-# About Digital_presenter <img src="docs/_static/media/logo.svg" alt="digital_presenter_logo" width="100">
-----------------------------------------------------------------------------------------------------------
+<div align="center">
 
-Repository of Manim to create a digital companion to present your videos, slides, etc. You can animate it with simple commands in your Manim files!
+# Digital Presenter 
 
-<video src="docs/_static/media/videos/Logo_Demo.mp4" controls loop muted>
-</video>
+**A Manim extension for creating animated digital companions to improve your videos, slides, presentations!**
 
+[Documentation](https://panopepino.github.io/digital_presenter/) • [Examples](#examples) • [Installation](#installation)
 
-This animated creature can be used in two different ways:
+<a href="https://www.buymeacoffee.com/panopepino" target="_blank">
+  <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="30" />
+</a>
 
-- You call it into your python script with `Creature` and animate with the inbuilt methods `Creature.animate_methods()` along the script of your video, slices, etc.
-- Alternatively, you can create a .csv file with two columns as animaton/dialogue. You can then use `script_sequencer` to iterate through each of the csv lines to animate your creature and the same time it "talks" in a dialogue box on the screen.
+</div>
 
-(See documentation for further information)
+## 📖 Overview
 
------------------------------------------------------------------------
+Digital Presenter is a Manim library that allows you to create animated creatures as digital companions for your videos, slides, and presentations. Animate them with simple commands directly in your Manim scripts!
 
-:memo: **Note**
-- Note each creature you may design will require adjusting the position of shoulders, eyes, body, hands, depending on its form. This can be easily done with the inbuilt parameters (See DOCUMENTATION)
-
------------------------------------------------------------------------
-
-:warning: **Warning**
-
-- The package will be displayed in pip as **manim_digital_presenter**. This is also the way to import the package in the preamble of your python files. However, documentation and webpage will just keep the name as **digital_presenter** for simplicity.
-
------------------------------------------------------------------------
-
-## Examples
-
-- Here you can see a demo:
-
-<video src="docs/_static/media/videos/Basics_Demo.mp4" controls loop muted>
-</video>
+<div align="center">
+  <video width="700" controls loop autoplay muted>
+    <source src="docs/_static/media/videos/Logo_Demo.mp4" type="video/mp4">
+  </video>
+</div>
 
 
-- A more advanced example can be found in: 
 
-<video src="https://www.youtube.com/watch?v=MEuX53M5mBU&list=PL7qJnArvRQzHci5IAHRqCuS2eF4_baHTR" controls>
-</video>
+## ✨ Features
 
------------------------------------------------------------------------
+Digital Presenter offers two flexible ways to animate your companion:
+
+- **Direct scripting**: Call `Creature` in your Python script and animate using built-in methods like `Creature.animate_methods()` alongside your presentation code.
+
+- **CSV-based automation**: Create a CSV file with animation/dialogue columns, then use `script_sequencer` to iterate through each line, animating your creature while displaying synchronized dialogue boxes.
+
+
+## 🎥 Examples
+
+### Basic Demo
+See the [documentation](https://panopepino.github.io/digital_presenter/) for the complete code of previous animation.
+
+<div align="center">
+  <video width="700" controls loop autoplay muted>
+    <source src="docs/_static/media/videos/Basics_Demo.mp4" type="video/mp4">
+  </video>
+</div>
+
+
+
+### Advanced Examples
+
+Check out this [YouTube playlist](https://www.youtube.com/watch?v=MEuX53M5mBU&list=PL7qJnArvRQzHci5IAHRqCuS2eF4_baHTR) for more complex implementations.
+
 
 ## Installation and use
 
@@ -50,7 +59,6 @@ This animated creature can be used in two different ways:
 git clone https://github.com/PanoPepino/digital_presenter
 
 pip install digital_presenter/ .
-
 ```
 
 - To **use** within your manim files, call it with:
@@ -59,14 +67,32 @@ pip install digital_presenter/ .
 from manim_digital_presenter import *
 ```
 
------------------------------------------------------------------------
+For detailed usage instructions and API reference, visit the [documentation](https://panopepino.github.io/digital_presenter/).
 
+## Important Notes
+
+> **⚙️ Customization**  
+> Each creature design may require position adjustments for shoulders, eyes, body, and hands depending on its form. This can be easily configured using built-in parameters (see [documentation](https://panopepino.github.io/digital_presenter/) for details).
+
+
+### 💖 Support My Work
+
+If you find this project helpful, consider supporting me. Thank you!
+
+<p align="center">
+  <a href="https://www.buymeacoffee.com/panopepino" target="_blank">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="50" />
+  </a>
+</p>
+
+<!--
 # TO DO:
 
+- Fix Readme.md [_]
 - If Mods say there is legal issue, fix logo (Substitute Manim for Digital Presenter). [_]
 - Create + Add video and code for Timeline + Script Example [_]
 - Create explanation slide [_]
 - Add donation stuff to documentation and github [_]
 
-
+-->
 

@@ -18,9 +18,9 @@ dependencies = [
   "numpy>=2.0.2",
   "pybtex>=0.23.0",
 ]
-description = "Package to create and use 2D animated creatures in Manim libraries"
+description = "Package to create and use 2D animated companions in Manim libraries"
 dynamic = ["readme", "version"]
-keywords = ["manim", "digital_creature", "animation", "presenter"]
+keywords = ["manim", "digital companion", "animation", "presenter"]
 license = "MIT"
 license-files = ["LICENSE*"]  # Glob pattern for license files
 name = "manim_digital_presenter"
@@ -33,9 +33,9 @@ docs = [
 ]
 
 [project.urls]
-Homepage = "https://panopepino.github.io/digital_creature/"
-Documentation = "https://panopepino.github.io/digital_creature/"
-Repository = "https://github.com/PanoPepino/digital_creature"
+Homepage = "https://panopepino.github.io/digital_presenter/"
+Documentation = "https://panopepino.github.io/digital_presenter/"
+Repository = "https://github.com/PanoPepino/digital_presenter"
 
 [tool.hatch.version]
 path = "src/manim_digital_presenter/__version__.py"
@@ -47,7 +47,7 @@ extend-select = [
   "I",  # Isort
   "TID",  # https://docs.astral.sh/ruff/rules/relative-imports/
 ]
-isort = {known-first-party = ["beanim"]}
+isort = {known-first-party = ["manim_digital_presenter"]}
 
 [tool.uv]
 dev-dependencies = [

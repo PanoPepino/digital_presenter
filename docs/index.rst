@@ -1,11 +1,11 @@
 Digital Presenter
 =================
 
-Welcome to the documentation of Digital Presenter, a Manim package to create a simple digital creature that acts as a presenter of your video, slides, or lecture. 
+Welcome to the documentation of Digital Presenter, a Manim package to create a simple digital companion that acts as a presenter of your video, slides, lecture, etc. 
 
 With very simple commands, you will be able to animate a character that will guide your audience through the content you want to share.
 
-This is a simple example of what can be done with this package:
+This is a simple example of what your digital presenter can do:
 
 .. raw:: html
 
@@ -21,8 +21,6 @@ This is a simple example of what can be done with this package:
        Your browser does not support the video tag.
      </video>
    </div>
-
-
 
 First Steps
 -----------
@@ -49,7 +47,7 @@ If you want more detailed explanations, see :doc:`how_to_use` and the :doc:`api/
 - :doc:`api/manim_digital_presenter.presenter` contains the main classes to create and animate the digital presenter.
 - :doc:`api/manim_digital_presenter.script_controller` contains the classes to control the script of an automatic presentation, making use of a timeline where the actions of the presenter and the overall animations will be controlled iteratively
 
----------------------------------------------------------------------------------------------
+------------------------------------------------
 
 .. warning::
 
@@ -60,7 +58,6 @@ If you want more detailed explanations, see :doc:`how_to_use` and the :doc:`api/
 
    I would like to thank Abulafia (the creator of the `timeline <https://github.com/abul4fia/manim-play-timeline>`_ Manim plugging) and Uwezi (and all the `Manim CE Discord <https://discord.gg/nfJXC2qh>`_ by extension) for unvaluable help when I was crafting this package.
 
-
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
@@ -69,5 +66,20 @@ If you want more detailed explanations, see :doc:`how_to_use` and the :doc:`api/
    how_to_use
    examples
    api/modules
-   
-   
+
+
+----
+
+.. raw:: html
+
+   <div style="text-align: center; margin: 30px 0;">
+     <p style="font-size: 16px; margin-bottom: 15px;">
+       💖 <strong>If you find this project helpful, consider supporting its development. Thank you!</strong>
+     </p>
+     <a href="https://www.buymeacoffee.com/panopepino" target="_blank">
+       <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" 
+            alt="Buy Me A Coffee" 
+            style="height: 50px; border-radius: 10px;">
+     </a>
+   </div>
+
