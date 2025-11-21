@@ -1,0 +1,32 @@
+Hello! I will be your digital presenter teacher for today!/happy/
+I will guide you throught the basics to create and manipulate digital presenters./excited/
+First, let's import the necessary libraries./look_at/UP/
+Do not forget to import this package to create your companions!/surprised/
+Now, let me show you the basics of your digital companion!/thinking/
+Here's the code to create your own creature!/look_at/UP/
+And this is what the creature looks like!/look_at/test_creature
+Let's discuss some of the input parameters./thinking/
+If you want to create unique companions, these inputs are important!/excited/
+You can choose the color of the creature through the eyelid color./look_at/test_creature
+The eye to body ratio controls the size of eyes respect to the body!/thinking/
+The position of the eyes is controlled by the frown of the creature./look_at/test_creature
+You can control the opacity of this point by making its anchor opacity equal 1.../have_idea/
+And the eyes' position respect this point is controlled with the vector relative eye position./excited/
+Eyes distance sets how far apart the eyes are from this point./look_at/test_creature
+The parameter hand body ratio controls hand size./have_idea/
+Similar to the eyes position, you can control hands vertical position with shift shoulder./happy/
+Digital Presenters will have a default body and hands!/thinking/
+However, you can add you own body and hands throught parameters core and hand!/have_idea/
+Now let's explore what creatures can do!/have_idea/
+We Creatures can look in any direction you want./look_at/test_creature
+They can point at objects when they have hands./look_at/test_creature
+Both pointing and looking inputs can be Mobjects or vectors!/excited/
+And we also have plenty of expressions too!/happy/
+The excited method shows energy and enthusiasm!/look_at/test_creature
+The thinking method shows contemplation./look_at/test_creature
+And have idea shows that eureka moment!/look_at/test_creature
+But not always can solve our problems!!/dont_know/
+No, we are not perfect.../bored/
+... But we will be there to help you present your content!/happy/
+These are our fundamental building blocks!/look_at/test_creature
+Thanks for learning with me today!/happy/

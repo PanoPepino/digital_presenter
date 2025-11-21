@@ -10,17 +10,18 @@ This is a simple example of what your digital presenter can do:
 .. raw:: html
 
    <div style="text-align: center;">
-     <video
-        src="_static/media/videos/Logo_Demo.mp4"
-        autoplay
-        loop
-        muted
-        playsinline
-        controls
-        style="max-width: 100%; height: auto;">
-       Your browser does not support the video tag.
-     </video>
+  <video
+     src="_static/media/videos/Logo_Demo.mp4"
+     autoplay
+     loop
+     muted
+     playsinline
+     controls
+     style="max-width: 100%; height: auto; border: 2px solid #000000; border-radius: 8px;">
+    Your browser does not support the video tag.
+  </video>
    </div>
+
 
 First Steps
 -----------

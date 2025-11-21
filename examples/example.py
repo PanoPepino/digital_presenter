@@ -89,51 +89,6 @@ class Creature_Letter_Test(Scene):
         self.wait(2)
 
 
-class Timeline_Test(Scene):
-    def construct(self):
-
-        # Creature body parts and definition
-        body = Tex("$\\Sigma$", font_size=250, color=ORANGE)
-        my_creature = Creature(eyelid_color_input=ORANGE,
-                               relative_eye_position=[0.2, -0.1, 0],
-                               eye_body_ratio=0.3,
-                               anchor_opacity=0,
-                               eyelid_stroke_color=BLACK,
-                               eyelid_stroke_width=1,
-                               core=body,
-                               eyes_distance=0.2)
-        my_creature.to_corner(DL)
-
-        # Test objects
-        point_1 = Square(color=RED).scale(0.7).to_corner(RIGHT)
-        point_2 = Triangle(color=BLUE).scale(0.3).move_to([5, 3, 0])
-        point_3 = Circle(color=GREEN).to_corner(UL)
-
-        # Timeline
-        timeline = {
-            1: FadeIn(my_creature),
-            3: FadeIn(point_1),
-            5: my_creature.look_at(point_1),
-            8: FadeIn(point_2),
-            10: my_creature.look_at(point_2),
-            13: FadeIn(point_3),
-            15: my_creature.look_at(point_3),
-            18: my_creature.surprise(),
-            21: my_creature.thinking(),
-            24: my_creature.have_idea(),
-            27: my_creature.animate.rotate(PI/2),
-            30: [
-                my_creature.animate.move_to(ORIGIN),
-                FadeOut(VGroup(point_1, point_2, point_3)),
-                FadeOut(my_creature)
-            ]
-        }
-
-        # Running Timeline
-        play_timeline(self, timeline)
-        self.wait(2)
-
-
 class Loader_Test(Scene):
     def construct(self):
         # Create objects

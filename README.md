@@ -31,7 +31,7 @@ Digital Presenter offers two flexible ways to animate your companion:
 - **CSV-based automation**: Create a CSV file with animation/dialogue columns, then use `script_sequencer` to iterate through each line, animating your creature while displaying synchronized dialogue boxes.
 
 
-## 🎥 Examples
+## Examples
 
 ### Basic Demo
 See the [documentation](https://panopepino.github.io/digital_presenter/) for the complete code of previous animation.
@@ -48,7 +48,7 @@ See the [documentation](https://panopepino.github.io/digital_presenter/) for the
 Check out this [YouTube playlist](https://www.youtube.com/watch?v=MEuX53M5mBU&list=PL7qJnArvRQzHci5IAHRqCuS2eF4_baHTR) for more complex implementations.
 
 
-## Installation and use
+## Installation
 
 - In order to **install** this library, do the following:
 
