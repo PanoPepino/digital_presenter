@@ -52,8 +52,7 @@ If you want more detailed explanations, see :doc:`how_to_use` and the :doc:`api/
 
 .. warning::
 
-   This is a package under construction. New features and a more optimised organisation will come. Also, if you are an expert in this kind of things, and want to collaborate, you are more than welcome to enhance this humble library! In case you find some and/or have some suggestions, please
-   report at `github issues <https://github.com/PanoPepino/beanim/issues>`_.
+   This is a package under construction. New features and a more optimised organisation will come. In case you find some and/or have some suggestions, please report at `github issues <https://github.com/PanoPepino/beanim/issues>`_.
    
 .. note::
 

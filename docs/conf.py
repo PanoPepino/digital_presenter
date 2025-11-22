@@ -24,7 +24,7 @@ sys.path.insert(0, os.path.abspath('../src/manim_digital_presenter'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'Digital Presenter'
+project = 'DP'
 copyright = '2025, Pano'
 author = 'Pano'
 
@@ -38,6 +38,7 @@ extensions = [
     'sphinx.ext.napoleon',                      # Support for NumPy and Google style docstrings
     'sphinx.ext.intersphinx',                   # Link to other project's documentation
     'sphinx.ext.mathjax',                       # Render math expressions
+    'sphinx_copybutton',                        # To copy code
 ]
 
 

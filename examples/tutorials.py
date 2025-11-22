@@ -9,7 +9,7 @@ class Logo_Demo(Scene):
         self.camera.background_color = "#000000"
         # Creature
         my_creature = Creature(
-            eyelid_color_input="#81b29a",
+            eyelid_color_input=GREEN,
             relative_eye_position=[0, 0.1, 0],
             eye_body_ratio=0.35,
             hand_body_ratio=0.5,
@@ -22,14 +22,14 @@ class Logo_Demo(Scene):
         my_creature.to_corner(DL)
 
         # Manim Logo and rectangle
-        ml = ManimBanner(dark_theme=True).scale(0.7).shift(UP)
+        ml = DigitalPresenterBanner(dark_theme=True).shift(1.5*UP)
 
         self.play(LaggedStart(ml.create(), FadeIn(my_creature, shift=10*DOWN, run_time=0.7), lag_ratio=0.5))
         self.play(LaggedStart(ml.expand(),
                               my_creature.point_at(ml, rt=2),
                               lag_ratio=0.5))
-        self.play(my_creature.animate.move_to([0, -0.7, 0]))
-        self.play(AnimationGroup(ml.animate.scale(0.6),
+        self.play(my_creature.animate.move_to([0, -1.5, 0]), run_time=0.7)
+        self.play(AnimationGroup(ml.animate.scale(0.6, about_edge=DOWN),
                                  my_creature.look_at(UP, rf=linear, rt=1),
                                  Rotate(mobject=my_creature.r_hand,
                                         angle=(0.8*PI),
@@ -39,16 +39,9 @@ class Logo_Demo(Scene):
                                         angle=(-0.8*PI),
                                         about_point=my_creature.l_shoulder.get_center(),
                                         run_time=1)))
-
-        rec = RoundedRectangle(width=VGroup(ml, my_creature).get_width()+1,
-                               height=VGroup(ml, my_creature).get_height()+1,
-                               corner_radius=0.3,
-                               stroke_color="#2730e6",
-                               ).move_to(VGroup(ml, my_creature).get_center())
-        self.play(Create(rec))
         self.wait(2)
-        svg_file = VGroup(my_creature, ml, rec)
-        svg_file.to_svg("logo.svg", crop=True, padding=0.2)
+        svg_file = VGroup(my_creature, ml)
+        svg_file.to_svg("logo.svg", crop=True, padding=0.8)
 
 
 class Basics_Demo(Scene):
@@ -551,6 +544,8 @@ class Explanation_Creature_Features(Slide):
 
 # ------------------------------------------------------------------------- #
 
+# Code exporter definition and strings of code
+
 
 def code_exporter(code_string):
     to_export = Code(
@@ -592,3 +587,6 @@ self.play(test.have_idea())
 self.play(test.dont_know())
 self.play(test.bored())
 self.play(test.happy())'''
+
+
+# ------------------------------------------------------------------------- #
