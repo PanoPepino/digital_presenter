@@ -1,14 +1,30 @@
-from ..my_imports import *
-from .eyes import *
+from collections.abc import Callable
+from importlib.resources import as_file, files
+
+import numpy as np
+from manim import (
+    Animation, AnimationGroup, Dot, DOWN, LEFT, RIGHT, UP, PI, RED,
+    LaggedStart, Line, Mobject, ParsableManimColor, Rotate, SVGMobject,
+    there_and_back_with_pause,
+)
+
+from .eyes import Eyes
+from .geometry import direction_vector, positive, signed_planar_angle, vector3
+
+
+def _load_svg(name):
+    resource = files(__package__ + ".default_svgs").joinpath(name)
+    with as_file(resource) as filename:
+        return SVGMobject(str(filename))
 
 
 
 __all__ = ["Creature"]
 
 
-class Creature(Eyes, VMobject):
+class Creature(Eyes):
     """
-    This class creates a creature composed of eyes, body, and hands by combining 
+    This class creates a creature composed of eyes, body, and hands by combining
     functionality from :class:`Eyes` and :class:`Mobject`.
 
     :param eye_body_ratio: Ratio of eye size relative to the body. Defaults to 0.6.
@@ -26,14 +42,18 @@ class Creature(Eyes, VMobject):
     :param anchor_color: Color of the anchor dots. Defaults to :attr:`RED`.
     :type anchor_color: :class:`ParsableManimColor`
 
-    :param core: Core body Mobject. Defaults to empty :class:`Mobject`. This parameter can be any Manim Mobject or an SVG file.
+    :param core: Body Mobject. Defaults to bundled body SVG.
     :type core: :class:`Mobject`
 
-    :param hand: Hand Mobject to attach to the creature. Defaults to None. 
+    :param hand: Hand Mobject. Bundled hands accompany the default body; custom bodies have no hands unless supplied.
     :type hand: (Optional) :class:`Mobject` or None.
 
-    :param shift_shoulder: Relative vertical position of the :param: anchor_opacity with respect to the creature body center (positive values will shift DOWN. Negative values will shift shoulder up)
+    :param shift_shoulder: Relative vertical position of the shoulder anchors with respect to the creature body center (positive values will shift DOWN. Negative values will shift shoulder up)
     :type shift_shoulder: float, optional
+
+    :param copy_parts: Copy supplied body and hand before styling. Defaults to False for compatibility.
+    :param body_color: Body colour, defaulting to eyelid colour.
+    :param hand_color: Hand colour, defaulting to eyelid colour.
 
     .. note::
         You can find information on how to use this class in the main page of the `manimdigital-presenter` documentation.
@@ -43,124 +63,96 @@ class Creature(Eyes, VMobject):
     def __init__(self,
                  eye_body_ratio: float = 0.6,
                  hand_body_ratio: float = 0.5,
-                 relative_eye_position: list | np.ndarray = None,
+                 relative_eye_position: list | np.ndarray | None = None,
                  anchor_opacity: float = 0,
                  anchor_color: ParsableManimColor = RED,
-                 core: Mobject = None,
-                 hand: Mobject = None,
+                 core: Mobject | None = None,
+                 hand: Mobject | None = None,
                  shift_shoulder: float = 0,
+                 *,
+                 body_color: ParsableManimColor | None = None,
+                 hand_color: ParsableManimColor | None = None,
+                 copy_parts: bool = False,
                  **kwargs):
 
         super().__init__(**kwargs)
-        self.eye_body_ratio = eye_body_ratio
-        self.hand_body_ratio = hand_body_ratio
-        
-        # Convert relative_eye_position to a vector (default: slightly down from top)
-        if relative_eye_position is None:
-            self.relative_eye_position = np.array([0, -0.2, 0])
-        elif isinstance(relative_eye_position, (list, tuple)):
-            self.relative_eye_position = np.array(relative_eye_position)
-        else:
-            self.relative_eye_position = relative_eye_position
-            
+        self.eye_body_ratio = positive(eye_body_ratio, "eye_body_ratio")
+        self.hand_body_ratio = positive(hand_body_ratio, "hand_body_ratio")
+        self.relative_eye_position = vector3(
+            [0, -0.2, 0] if relative_eye_position is None else relative_eye_position,
+            "relative_eye_position",
+        )
+        if not np.isfinite(shift_shoulder):
+            raise ValueError("shift_shoulder must be finite")
+        if not np.isfinite(anchor_opacity) or not 0 <= anchor_opacity <= 1:
+            raise ValueError("anchor_opacity must be between 0 and 1")
         self.anchor_opacity = anchor_opacity
         self.anchor_color = anchor_color
-        self.hand = hand
-        self.core = core
         self.shift_shoulder = shift_shoulder
+        self.copy_parts = copy_parts
+        # Resolve legacy style once; gesture code does not depend on eye styling.
+        self.body_color = self.eyelid_color_input if body_color is None else body_color
+        self.hand_color = self.eyelid_color_input if hand_color is None else hand_color
 
-        # Set fill opacity to see the joints of the creature.
-        Dot().set_default(color=self.anchor_color, fill_opacity=self.anchor_opacity)
+        self.core = _load_svg("default_body.svg") if core is None else (
+            core.copy() if copy_parts else core
+        )
+        positive(self.core.height, "core height")
+        self.core.set_color(self.body_color).set_stroke(
+            color=self.eyelid_stroke_color, width=self.eyelid_stroke_width
+        ).set_z_index(-3)
+        self.hand = _load_svg("default_hand.svg") if hand is None and core is None else (
+            hand.copy() if copy_parts and hand is not None else hand
+        )
 
-        # Body Load default SVG files if core not provided
-        if core is None:
-            get_body_path = path.join(path.dirname(__file__), "default_svgs/default_body.svg")
-            self.core = SVGMobject(get_body_path)
-        else:
-            self.core = core        
+        def anchor():
+            return Dot(color=anchor_color, fill_opacity=anchor_opacity,
+                       stroke_opacity=anchor_opacity).set_z_index(10)
 
-        self.core.set(color=self.eyelid_color_input, 
-                      stroke_color=self.eyelid_stroke_color, 
-                      stroke_width=self.eyelid_stroke_width)
-        self.core.set_z_index(-3)
+        self.l_shoulder = anchor().next_to(
+            self.core.get_corner(LEFT), LEFT + shift_shoulder * DOWN, buff=0.05
+        )
+        self.r_shoulder = anchor().next_to(
+            self.core.get_corner(RIGHT), RIGHT + shift_shoulder * DOWN, buff=0.05
+        )
+        self.frown = anchor().move_to(self.core.get_corner(UP) + self.relative_eye_position)
+        self.eye_group.move_to(self.frown.get_center())
+        self.chosen_eye_ratio = eye_body_ratio * self.core.height / self.eye_group.height
+        self.eye_group.scale(self.chosen_eye_ratio)
 
-        # Hands
-        if hand is None and core is None:
-            get_hand_path = path.join(path.dirname(__file__), "default_svgs/default_hand.svg")
-            self.hand = SVGMobject(get_hand_path)
-        else:
-            self.hand = hand
+        self.question = _load_svg("question_mark.svg").set_color(self.body_color)
+        self.question.scale(0.2).next_to(self.eye_group, UP, buff=0.2).set_opacity(0)
+        self.bulb = _load_svg("lightbulb.svg")
+        self.bulb.scale(0.3).next_to(self.eye_group, UP, buff=0.2).set_opacity(0)
+        self.add(self.core, self.frown, self.l_shoulder, self.r_shoulder,
+                 self.question, self.bulb)
 
-        self.l_shoulder = Dot().next_to(self.core.get_corner(LEFT), LEFT+self.shift_shoulder*DOWN, buff=0.05).set_z_index(10)
-        self.r_shoulder = Dot().next_to(self.core.get_corner(RIGHT), RIGHT+self.shift_shoulder*DOWN, buff=0.05).set_z_index(10)
-
-        # Eyes - Now using vector-based positioning
-        # Create anchor point at the top center of the body
-        body_top_center = self.core.get_corner(UP)
-        
-        # Position the frown at top center + relative_eye_position vector
-        self.frown = Dot().move_to(body_top_center + self.relative_eye_position).set_z_index(10)
-        
-        # Position the eyes at the frown location
-        self.oculii.move_to(self.frown.get_center())
-        self.chosen_eye_ratio = self.eye_body_ratio*self.core.get_height()/self.oculii.get_height()
-        self.oculii.scale(self.chosen_eye_ratio)
-
-        # Extra accessories
-        get_bulb_path = path.join(path.dirname(__file__), "default_svgs/lightbulb.svg")
-        get_question_path = path.join(path.dirname(__file__), "default_svgs/question_mark.svg")
-
-        self.question = SVGMobject(get_question_path).set_color(self.eyelid_color_input)
-        self.question.scale(0.2).next_to(self.oculii, UP, buff=0.2)
-        self.question.set_opacity(0)
-
-        self.bulb = SVGMobject(get_bulb_path)
-        self.bulb.scale(0.3).next_to(self.oculii, UP, buff=0.2)
-        self.bulb.set_opacity(0)
-        
-        # Loading creature
-        if self.hand:
-            self.chosen_hand_ratio = self.hand_body_ratio*self.core.get_height()/self.hand.get_height()
-            self.l_hand = self.hand.set(color=self.eyelid_color_input)
-            self.l_hand.set(color=self.eyelid_color_input, 
-                                      stroke_color=self.eyelid_stroke_color, 
-                                      stroke_width=self.eyelid_stroke_width)
-            self.l_hand.scale(self.chosen_hand_ratio).next_to(self.l_shoulder, DOWN, aligned_edge=UP, buff=0.1)
-            self.r_hand = self.l_hand.copy().flip().next_to(self.r_shoulder, DOWN, aligned_edge=UP, buff=0.1)
-
-            self.add(self.core, self.frown, self.l_shoulder, self.r_shoulder, self.l_hand, self.r_hand, self.question, self.bulb)
-
-        else:
-            print("---------- Warning ----------\n",
-                  "The creature has no hands\n",
-                  "All creature animations will load without hand animations\n",
-                  "-----------------------------")
-            self.add(self.core, self.frown, self.l_shoulder, self.r_shoulder, self.question, self.bulb)
-
-        self._go_live() 
-
-    def _go_live(self):
-        """
-        Dummy function to make the creature alive. It uses its own timer to make the creature blink and any other passive changes on the creature (for example, one can adapt an updater to make the creature breath, or shine based on this dummy element)
-        
-        """
-
-        time = 0
-        dummy_element = VMobject()
-
-        def living(mob, dt):
-            nonlocal time
-            time += dt
-        dummy_element.add_updater(living)
-        self.add(dummy_element)
+        if self.hand is not None:
+            positive(self.hand.height, "hand height")
+            self.chosen_hand_ratio = hand_body_ratio * self.core.height / self.hand.height
+            self.l_hand = self.hand.set_color(self.hand_color).set_stroke(
+                color=self.eyelid_stroke_color, width=self.eyelid_stroke_width
+            )
+            self.l_hand.scale(self.chosen_hand_ratio).next_to(
+                self.l_shoulder, DOWN, aligned_edge=UP, buff=0.1
+            )
+            # Hidden axis follows rotations and scaling; bounding boxes do not.
+            self.l_hand._presenter_pointing_axis = Line(
+                self.l_hand.get_top(), self.l_hand.get_bottom(), stroke_opacity=0
+            )
+            self.l_hand.add(self.l_hand._presenter_pointing_axis)
+            self.r_hand = self.l_hand.copy().flip().next_to(
+                self.r_shoulder, DOWN, aligned_edge=UP, buff=0.1
+            )
+            self.add(self.l_hand, self.r_hand)
 
     # Animations for the creature
     def point_at(self,
                 direction: list | Mobject, # That bar allows for either class
-                rf: float = there_and_back_with_pause,
-                rt: float = 3) -> Animation:   
+                rf: Callable[[float], float] = there_and_back_with_pause,
+                rt: float = 3) -> Animation:
         """
-        Method to make the creature point to any direction or object in the screen. It makes use of :meth:`get_position_and_hand` and :meth:`angle_hand_rotation` to determine which hand and the direction in which this will point to.
+        Method to make the creature point to any direction or object in the screen. It makes use of :meth:`_get_position_and_hand` and :meth:`_angle_hand_rotation` to determine which hand and the direction in which this will point to.
 
         :param direction: The direction or object to point to.
         :type direction: np.array | Mobject
@@ -175,30 +167,33 @@ class Creature(Eyes, VMobject):
         :rtype: :class:`Animation`
 
         .. note::
-            This method will not be valid for a creature without hands.
-        
+            Without hands, this method returns a gaze animation.
+
         """
 
-        pointing_at, the_hand, the_shoulder, delta = self._get_position_and_hand(direction)
+        positive(rt, "rt")
+        if self.hand is None:
+            return super().look_at(direction, rf=rf, rt=rt)
+        pointing_at, the_hand, the_shoulder, _ = self._get_position_and_hand(direction)
         the_angle = self._angle_hand_rotation(the_hand, pointing_at)
-        
+
         return LaggedStart(
-                super().look_at(self.pupil_to_eye_rate*pointing_at),
-                    Rotate(mobject=the_hand, 
-                           angle=(1-2*delta)*(the_angle), 
-                           about_point=the_shoulder.get_center(), 
-                           rate_func=rf, 
+                super().look_at(pointing_at, rf=rf, rt=rt),
+                    Rotate(mobject=the_hand,
+                           angle=the_angle,
+                           about_point=the_shoulder.get_center(),
+                           rate_func=rf,
                            run_time=rt),
-                           lag_ratio=0.1)
-    
+                           lag_ratio=0.1, run_time=rt, group=self, suspend_mobject_updating=False)
+
     def surprise(self,
-                  rf: float = there_and_back_with_pause,
+                  rf: Callable[[float], float] = there_and_back_with_pause,
                   rt: float = 3) -> Animation:
         """
         Method to make the creature look surprised. It takes the :meth:`surprised` from :class:`Eyes` and add the hands covering the "mouth" of the creature.
 
         :param rf: The rate function at which it will do it. Defaults to :func:`there_and_back_with_pause`.
-        :type rf:`func`
+        :type rf: callable
 
         :param rt: run_time of the animation. Defaults to 3".
         :type rt: float
@@ -211,27 +206,27 @@ class Creature(Eyes, VMobject):
 
         .. warning::
             This method is called surprise but it uses the :meth:`surprised` from :class:`Eyes` internally. That extra "d" is important!
-        
+
         """
 
-        if self.hand:
+        if self.hand is not None:
             return AnimationGroup(
-                    super().surprised(), #This is to invoque the animation of the eyes.
-                        Rotate(mobject=self.l_hand, 
-                               angle=(0.6*PI), 
-                               about_point=self.l_shoulder.get_center(), 
-                               rate_func=rf, 
+                    super().surprised(rf=rf, rt=rt), #This is to invoque the animation of the eyes.
+                        Rotate(mobject=self.l_hand,
+                               angle=(0.6*PI),
+                               about_point=self.l_shoulder.get_center(),
+                               rate_func=rf,
                                run_time=rt),
-                        Rotate(mobject=self.r_hand, 
-                               angle=-(0.6*PI), 
-                               about_point=self.r_shoulder.get_center(), 
-                               rate_func=rf, 
-                               run_time=rt))
+                        Rotate(mobject=self.r_hand,
+                               angle=-(0.6*PI),
+                               about_point=self.r_shoulder.get_center(),
+                               rate_func=rf,
+                               run_time=rt), group=self, suspend_mobject_updating=False)
         else:
-            return AnimationGroup(super().surprised())
+            return AnimationGroup(super().surprised(rf=rf, rt=rt), group=self, suspend_mobject_updating=False)
 
     def thinking(self,
-                 rf: float = there_and_back_with_pause,
+                 rf: Callable[[float], float] = there_and_back_with_pause,
                  rt: float = 3) -> Animation:
         """
         Method to make the creature think. A question mark will appear on top of its eyes
@@ -250,22 +245,22 @@ class Creature(Eyes, VMobject):
 
         """
 
-        if self.hand:
+        if self.hand is not None:
             return AnimationGroup(
-                    super().look_at(self.pupil_to_eye_rate*UP),
+                    super().look_at(UP, rf=rf, rt=rt),
                     self.question.animate(run_time=rt, rate_func=rf).set_opacity(1),
-                    Rotate(mobject=self.l_hand, 
-                               angle=(0.6*PI), 
-                               about_point=self.l_shoulder.get_center(), 
-                               rate_func=rf, 
-                               run_time=rt))
+                    Rotate(mobject=self.l_hand,
+                               angle=(0.6*PI),
+                               about_point=self.l_shoulder.get_center(),
+                               rate_func=rf,
+                               run_time=rt), group=self, suspend_mobject_updating=False)
         else:
             return AnimationGroup(
-                    super().look_at(self.pupil_to_eye_rate*UP),
-                    self.question.animate(run_time=rt, rate_func=rf).set_opacity(1))
-  
+                    super().look_at(UP, rf=rf, rt=rt),
+                    self.question.animate(run_time=rt, rate_func=rf).set_opacity(1), group=self, suspend_mobject_updating=False)
+
     def dont_know(self,
-                 rf: float = there_and_back_with_pause,
+                 rf: Callable[[float], float] = there_and_back_with_pause,
                  rt: float = 3) -> Animation:
         """
         Method to make the creature look hesitant, including a shoulder shrug.
@@ -284,20 +279,22 @@ class Creature(Eyes, VMobject):
 
         """
 
-        if self.hand:
+        if self.hand is not None:
             return AnimationGroup(
-                    super().look_at(self.pupil_to_eye_rate*UP),
+                    super().look_at(UP, rf=rf, rt=rt),
                     self.l_hand.animate(run_time=rt, rate_func=rf).shift(0.2*UP),
-                    self.r_hand.animate(run_time=rt, rate_func=rf).shift(0.2*UP)
-                    )
+                    self.r_hand.animate(run_time=rt, rate_func=rf).shift(0.2*UP),
+                group=self,
+                suspend_mobject_updating=False,
+            )
         else:
             return AnimationGroup(
-                    super().look_at(self.pupil_to_eye_rate*UP))
-    
+                    super().look_at(UP, rf=rf, rt=rt), group=self, suspend_mobject_updating=False)
+
     def have_idea(self,
-                 rf: float = there_and_back_with_pause,
+                 rf: Callable[[float], float] = there_and_back_with_pause,
                  rt: float = 3) -> Animation:
-        
+
         """
         Method to make the creature have an Eureka moment.
 
@@ -315,24 +312,26 @@ class Creature(Eyes, VMobject):
 
         """
 
-        if self.hand:
+        if self.hand is not None:
             return AnimationGroup(
-                    super().excited(),
+                    super().excited(rf=rf, rt=rt),
                     self.bulb.animate(run_time=rt, rate_func=rf).set_opacity(1),
-                    Rotate(mobject=self.r_hand, 
-                               angle=(0.9*PI), 
-                               about_point=self.r_shoulder.get_center(), 
-                               rate_func=rf, 
-                               run_time=rt)
-                    )
+                    Rotate(mobject=self.r_hand,
+                               angle=(0.9*PI),
+                               about_point=self.r_shoulder.get_center(),
+                               rate_func=rf,
+                               run_time=rt),
+                group=self,
+                suspend_mobject_updating=False,
+            )
         else:
-            return AnimationGroup(super().excited(),
-                                  self.bulb.animate(run_time=rt, rate_func=rf).set_opacity(1))
-        
+            return AnimationGroup(super().excited(rf=rf, rt=rt),
+                                  self.bulb.animate(run_time=rt, rate_func=rf).set_opacity(1), group=self, suspend_mobject_updating=False)
+
     def happy(self,
-                 rf: float = there_and_back_with_pause,
+                 rf: Callable[[float], float] = there_and_back_with_pause,
                  rt: float = 3) -> Animation:
-        
+
         """
         Method to make the creature look happy.
 
@@ -350,23 +349,25 @@ class Creature(Eyes, VMobject):
 
         """
 
-        if self.hand:
+        if self.hand is not None:
             return AnimationGroup(
-                    super().joy(),
-                    Rotate(mobject=self.r_hand, 
-                               angle=(0.7*PI), 
-                               about_point=self.r_shoulder.get_center(), 
-                               rate_func=rf, 
+                    super().joy(rf=rf, rt=rt),
+                    Rotate(mobject=self.r_hand,
+                               angle=(0.7*PI),
+                               about_point=self.r_shoulder.get_center(),
+                               rate_func=rf,
                                run_time=rt),
-                    Rotate(mobject=self.l_hand, 
-                               angle=(-0.7*PI), 
-                               about_point=self.l_shoulder.get_center(), 
-                               rate_func=rf, 
-                               run_time=rt)
-                    )
+                    Rotate(mobject=self.l_hand,
+                               angle=(-0.7*PI),
+                               about_point=self.l_shoulder.get_center(),
+                               rate_func=rf,
+                               run_time=rt),
+                group=self,
+                suspend_mobject_updating=False,
+            )
         else:
-            return AnimationGroup(super().joy())
-             
+            return AnimationGroup(super().joy(rf=rf, rt=rt), group=self, suspend_mobject_updating=False)
+
     def _get_position_and_hand(self, input):
         """
         Internal method to select which hand the creature will move given an input.
@@ -383,40 +384,12 @@ class Creature(Eyes, VMobject):
 
         """
 
-        if isinstance(input, Mobject):
-            vector = (input.get_center()-self.oculii.get_center())
-            new_direction = vector/np.linalg.norm(vector)
-        else:
-            new_direction = input
-
+        new_direction = direction_vector(input, self.eye_group.get_center())
         if new_direction[0] > 0:
-            #print("greater")
-            chosen_hand = self.r_hand
-            chosen_shoulder = self.r_shoulder
-            delta_func = 0
-        else:
-            #print("smaller")
-            chosen_hand = self.l_hand
-            chosen_shoulder = self.l_shoulder
-            delta_func= 1
-        return np.array(new_direction), chosen_hand, chosen_shoulder, delta_func
-    
+            return new_direction, self.r_hand, self.r_shoulder, 0
+        return new_direction, self.l_hand, self.l_shoulder, 1
+
     def _angle_hand_rotation(self, hand, look_vec):
-        """
-        Internal method to determine the angle of rotation of the hand given a point where to look at.
-
-        :param hand: The hand to be moved.
-        :type hand: Mobject.
-
-        :param look_vec: The direction to look and point at.
-        :type look_vec: list | Mobject.
-
-        :return: The angle of rotation
-        :rtype: float
-
-        """
-
-        vec_hand = hand.get_corner(DOWN)-hand.get_corner(UP)
-        norm_vec_hand = vec_hand/np.linalg.norm(vec_hand)
-        angle_rot = np.arccos((norm_vec_hand @ look_vec)/(np.linalg.norm(vec_hand)*np.linalg.norm(look_vec)))
-        return angle_rot
+        """Compute signed rotation using the hand's transformed pointing axis."""
+        axis = hand._presenter_pointing_axis
+        return signed_planar_angle(axis.get_end() - axis.get_start(), look_vec)

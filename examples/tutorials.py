@@ -1,14 +1,15 @@
+from pathlib import Path
+
 from manim import *
 from manim_digital_presenter import *
-from manim_mobject_svg import *
-from manim_slides import *
+from manim_slides import Slide
 
 
 class Logo_Demo(Scene):
     def construct(self):
         self.camera.background_color = "#000000"
         # Creature
-        my_creature = Creature(
+        my_creature = Creature(copy_parts=True,
             eyelid_color_input=GREEN,
             relative_eye_position=[0, 0.1, 0],
             eye_body_ratio=0.35,
@@ -28,7 +29,7 @@ class Logo_Demo(Scene):
         self.play(LaggedStart(ml.expand(),
                               my_creature.point_at(ml, rt=2),
                               lag_ratio=0.5))
-        self.play(my_creature.animate.move_to([0, -1.5, 0]), run_time=0.7)
+        self.play(my_creature.animate(suspend_mobject_updating=False).move_to([0, -1.5, 0]), run_time=0.7)
         self.play(AnimationGroup(ml.animate.scale(0.6, about_edge=DOWN),
                                  my_creature.look_at(UP, rf=linear, rt=1),
                                  Rotate(mobject=my_creature.r_hand,
@@ -40,15 +41,13 @@ class Logo_Demo(Scene):
                                         about_point=my_creature.l_shoulder.get_center(),
                                         run_time=1)))
         self.wait(2)
-        svg_file = VGroup(my_creature, ml)
-        svg_file.to_svg("logo.svg", crop=True, padding=0.8)
 
 
 class Basics_Demo(Scene):
     def construct(self):
 
         # Creature
-        my_creature = Creature(
+        my_creature = Creature(copy_parts=True,
             eyelid_color_input=DARK_BLUE,
             relative_eye_position=[0, 0.2, 0],
             eye_body_ratio=0.4,
@@ -99,7 +98,7 @@ class Timeline_Demo(Scene):
 
         # Creature body parts and definition
         body = Tex("$\\Sigma$", font_size=250, color=ORANGE)
-        my_creature = Creature(eyelid_color_input=ORANGE,
+        my_creature = Creature(copy_parts=True, eyelid_color_input=ORANGE,
                                relative_eye_position=[0.2, -0.1, 0],
                                eye_body_ratio=0.3,
                                anchor_opacity=0,
@@ -116,19 +115,18 @@ class Timeline_Demo(Scene):
 
         # Timeline
         timeline = {
-            1: FadeIn(my_creature),
-            3: FadeIn(point_1),
-            5: my_creature.look_at(point_1),
-            8: FadeIn(point_2),
-            10: my_creature.look_at(point_2),
-            13: FadeIn(point_3),
-            15: my_creature.look_at(point_3),
-            18: my_creature.surprise(),
-            21: my_creature.thinking(),
-            24: my_creature.have_idea(),
-            27: my_creature.animate.rotate(PI/2),
-            30: [
-                my_creature.animate.move_to(ORIGIN),
+            1: lambda: FadeIn(my_creature),
+            3: lambda: FadeIn(point_1),
+            5: lambda: my_creature.look_at(point_1),
+            8: lambda: FadeIn(point_2),
+            10: lambda: my_creature.look_at(point_2),
+            13: lambda: FadeIn(point_3),
+            15: lambda: my_creature.look_at(point_3),
+            18: lambda: my_creature.surprise(),
+            21: lambda: my_creature.thinking(),
+            24: lambda: my_creature.have_idea(),
+            27: lambda: my_creature.animate(suspend_mobject_updating=False).rotate(PI/2),
+            30: lambda: [
                 FadeOut(VGroup(point_1, point_2, point_3)),
                 FadeOut(my_creature)
             ]
@@ -143,7 +141,7 @@ class Timeline_Script_Demo(Scene):
     def construct(self):
         # Creature body parts and definition
         body = Tex("$\\Sigma$", font_size=250, color=ORANGE)
-        my_creature = Creature(
+        my_creature = Creature(copy_parts=True,
             eyelid_color_input=ORANGE,
             relative_eye_position=[0.2, -0.1, 0],
             eye_body_ratio=0.3,
@@ -172,14 +170,14 @@ class Timeline_Script_Demo(Scene):
 
         # Create script sequencer
         script_demo = script_sequencer(
-            csv_path="dialogue/timeline_script_demo.csv",
+            csv_path=Path(__file__).parent / "dialogue/timeline_script_demo.csv",
             the_creature=my_creature,
             text_box=text_box,
             animation_rt=4,
             tex_template=TexFontTemplates.comic_sans,
             tex_color=WHITE,
             font_size=30,
-            scene_locals=locals()
+            symbols={"point_1": point_1, "point_2": point_2, "point_3": point_3}
         )
 
         # Add initial objects
@@ -188,19 +186,19 @@ class Timeline_Script_Demo(Scene):
 
         # Timeline with script_sequencer integration
         timeline = {
-            2: next(script_demo),      # Introduction
-            6: FadeIn(point_1),
-            7: next(script_demo),       # First shape appears
-            11: FadeIn(point_2),
-            12: next(script_demo),      # Second shape appears
-            16: FadeIn(point_3),
-            17: next(script_demo),      # Third shape appears
-            21: next(script_demo),      # Getting surprised
-            25: next(script_demo),      # Thinking about it
-            29: next(script_demo),      # Hesitate
-            33: next(script_demo),      # Cleaning
-            36: FadeOut(VGroup(point_1, point_2, point_3)),
-            38: next(script_demo),      # Extra to erase text
+            2: lambda: next(script_demo),      # Introduction
+            6: lambda: FadeIn(point_1),
+            7: lambda: next(script_demo),       # First shape appears
+            11: lambda: FadeIn(point_2),
+            12: lambda: next(script_demo),      # Second shape appears
+            16: lambda: FadeIn(point_3),
+            17: lambda: next(script_demo),      # Third shape appears
+            21: lambda: next(script_demo),      # Getting surprised
+            25: lambda: next(script_demo),      # Thinking about it
+            29: lambda: next(script_demo),      # Hesitate
+            33: lambda: next(script_demo),      # Cleaning
+            36: lambda: FadeOut(VGroup(point_1, point_2, point_3)),
+            38: lambda: next(script_demo),      # Extra to erase text
             39: FadeOut(VGroup(my_creature, text_box))
 
         }
@@ -210,13 +208,125 @@ class Timeline_Script_Demo(Scene):
         self.wait(2)
 
 
+class Explanation_Creature_Features_Short(Scene):
+    """Nineteen four-second beats covering parameters and every creature gesture."""
+
+    BEAT_SECONDS = 4
+    FADE_SECONDS = 0.5
+    TEXT_FONT = "Comic Sans MS"
+
+    def construct(self):
+        def creature(x=0, **changes):
+            options = dict(eyelid_color_input=GREEN, eye_body_ratio=0.3,
+                           relative_eye_position=[0, -0.2, 0], blink_seed=1,
+                           eyelid_stroke_width=1, copy_parts=True)
+            options.update(changes)
+            result = Creature(**options)
+            result.scale(2 / result.core.height)
+            result.shift([x, -0.6, 0] - result.core.get_center())
+            return result
+
+        def caption(title, explanation, code):
+            lines = VGroup(
+                Text(title, font=self.TEXT_FONT, font_size=34),
+                Text(explanation, font=self.TEXT_FONT, font_size=24),
+                Text(code, font="monospace", font_size=21, color=YELLOW),
+            ).arrange(DOWN, buff=0.22)
+            if lines.width > config.frame_width - 1:
+                lines.scale_to_fit_width(config.frame_width - 1)
+            return lines.to_edge(UP, buff=0.25)
+
+        def fade_out():
+            if self.mobjects:
+                self.play(*(FadeOut(obj) for obj in list(self.mobjects)),
+                          run_time=self.FADE_SECONDS)
+
+        def beat(text, objects, animation_factory=None):
+            fade_out()
+            self.play(*(FadeIn(obj) for obj in [text, *objects]),
+                      run_time=self.FADE_SECONDS)
+            if animation_factory is None:
+                self.wait(self.BEAT_SECONDS)
+            else:
+                self.play(animation_factory(), run_time=self.BEAT_SECONDS)
+
+        first = creature()
+        beat(caption("Create a creature", "Default body, hands, and automatic blinking.",
+                     "from manim_digital_presenter import Creature\ncreature = Creature()"),
+             [first])
+
+        comparisons = [
+            ("Colors", "Colors change appearance; geometry stays unchanged.",
+             "body_color=BLUE, hand_color=ORANGE",
+             {}, dict(body_color=BLUE, hand_color=ORANGE)),
+            ("Eye size", "Larger ratio makes eyes larger relative to body.",
+             "eye_body_ratio: 0.3 -> 0.5", {}, dict(eye_body_ratio=0.5)),
+            ("Eye anchor", "Eye position follows visible forehead anchor.",
+             "relative_eye_position: [0,-0.2,0] -> [0,-0.6,0]",
+             dict(anchor_opacity=1),
+             dict(anchor_opacity=1, relative_eye_position=[0, -0.6, 0])),
+            ("Eye spacing", "Larger gap moves eyes farther apart.",
+             "eyes_distance: 0.1 -> 0.6", {}, dict(eyes_distance=0.6)),
+            ("Hand size", "Larger ratio makes hands longer relative to body.",
+             "hand_body_ratio: 0.5 -> 0.8", {}, dict(hand_body_ratio=0.8)),
+            ("Shoulder joints", "Shoulder anchors move together with attached hands.",
+             "shift_shoulder: 0 -> 8  |  anchor_opacity=1",
+             dict(anchor_opacity=1), dict(anchor_opacity=1, shift_shoulder=8)),
+            ("Custom geometry", "Provide both core and hand for a custom body with hands.",
+             "core=Ellipse(width=1.2, height=2, fill_opacity=1)\n"
+             "hand=Ellipse(width=0.3, height=1, fill_opacity=1)",
+             {}, dict(core=Ellipse(width=1.2, height=2, fill_opacity=1),
+                      hand=Ellipse(width=0.3, height=1, fill_opacity=1))),
+        ]
+        for title, explanation, code, reference_options, changed_options in comparisons:
+            reference = creature(-3, **reference_options)
+            before = creature(3, **reference_options)
+            after = creature(3, **changed_options)
+            labels = VGroup(Text("Reference", font=self.TEXT_FONT, font_size=22).move_to([-3, -3.2, 0]),
+                            Text("Modified", font=self.TEXT_FONT, font_size=22).move_to([3, -3.2, 0]))
+            beat(caption(title, explanation, code), [reference, before, labels],
+                 lambda: ReplacementTransform(before, after))
+
+        gestures = [
+            ("Gaze", "Look toward a direction vector or a scene object.",
+             "creature.look_at(UP, rt=4)", lambda c, target: c.look_at(UP, rt=4)),
+            ("Pointing", "Hands point toward target; eyes follow.",
+             "creature.point_at(target, rt=4)", lambda c, target: c.point_at(target, rt=4)),
+            ("Surprise", "Shrink pupils and bring hands toward the face.",
+             "creature.surprise(rt=4)", lambda c, target: c.surprise(rt=4)),
+            ("Thinking", "Combine eye and hand movements in one gesture.",
+             "creature.thinking(rt=4)", lambda c, target: c.thinking(rt=4)),
+            ("Uncertainty", "Look upward and raise hands in a shrug.",
+             "creature.dont_know(rt=4)", lambda c, target: c.dont_know(rt=4)),
+            ("An idea", "Show a lightbulb and gesture toward an idea.",
+             "creature.have_idea(rt=4)", lambda c, target: c.have_idea(rt=4)),
+            ("Happiness", "Express happiness with eyelids and hands.",
+             "creature.happy(rt=4)", lambda c, target: c.happy(rt=4)),
+            ("Bored eyes", "Lower eyelids for a bored expression.",
+             "creature.bored(rt=4)", lambda c, target: c.bored(rt=4)),
+            ("Surprised eyes", "Shrink pupils without moving hands.",
+             "creature.surprised(rt=4)", lambda c, target: c.surprised(rt=4)),
+            ("Excited eyes", "Enlarge pupils without moving hands.",
+             "creature.excited(rt=4)", lambda c, target: c.excited(rt=4)),
+            ("Joyful eyes", "Close eyelids into a happy curved expression.",
+             "creature.joy(rt=4)", lambda c, target: c.joy(rt=4)),
+        ]
+        for title, explanation, code, action in gestures:
+            example = creature()
+            target = Dot([4, 0.5, 0], color=ORANGE)
+            objects = [example, target] if title == "Pointing" else [example]
+            beat(caption(title, explanation, code), objects,
+                 lambda: action(example, target))
+        fade_out()
+
+
 class Explanation_Creature_Features(Slide):
     def construct(self):
         self.wait_time_between_slides = 0.1
 
         # Presenter Creature (NO HANDS)
         body_teacher = Tex("$\\Sigma$", font_size=250)
-        teacher_creature = Creature(
+        teacher_creature = Creature(copy_parts=True,
             eyelid_color_input=DARK_BLUE,
             relative_eye_position=[0.4, -0.1, 0],
             eye_body_ratio=0.3,
@@ -228,7 +338,7 @@ class Explanation_Creature_Features(Slide):
         )
 
         # Test Creature (WITH HANDS)
-        test_creature = Creature(
+        test_creature = Creature(copy_parts=True,
             eyelid_color_input=GREEN,
             relative_eye_position=[0, 0, 0],
             eye_body_ratio=0.3,
@@ -259,14 +369,14 @@ class Explanation_Creature_Features(Slide):
 
         # Create script sequencer
         script_demo = script_sequencer(
-            csv_path="dialogue/creature_tutorial.csv",
+            csv_path=Path(__file__).parent / "dialogue/creature_tutorial.csv",
             the_creature=teacher_creature,
             text_box=text_box,
             animation_rt=4,
             tex_template=TexFontTemplates.comic_sans,
             tex_color=WHITE,
             font_size=30,
-            scene_locals=locals()
+            symbols={"test_creature": test_creature}
         )
 
         # ----Presentation Script-----
@@ -566,16 +676,16 @@ first_block = '''from manim import *
 from manim_digital_presenter import *'''
 
 
-second_block = '''test = Creature(
+second_block = '''test = Creature(copy_parts=True,
     eyelid_color_input=GREEN,
     eye_body_ratio=0.4,
     anchor_opacity=0,
     relative_eye_position=[0, 0, 0],
     eyes_distance=0.3,
-    hand_body_ratio=0.6, 
+    hand_body_ratio=0.6,
     shift_shoulder=0.5,
-    core=Mobject(),
-    hand=Mobject())'''
+    core=Circle(fill_opacity=1),
+    hand=Square(fill_opacity=1))'''
 
 
 third_block = '''# Creature Capabilities

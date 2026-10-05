@@ -26,7 +26,7 @@ Digital Presenter is a Manim library that allows you to create animated creature
 
 Digital Presenter offers two flexible ways to animate your companion:
 
-- **Direct scripting**: Call `Creature` in your Python script and animate using built-in methods like `Creature.animate_methods()` alongside your presentation code.
+- **Direct scripting**: Call `Creature` in your Python script and animate using built-in methods like `Creature.happy()` or `Creature.point_at(target)` alongside your presentation code.
 
 - **CSV-based automation**: Create a CSV file with animation/dialogue columns, then use `script_sequencer` to iterate through each line, animating your creature while displaying synchronized dialogue boxes.
 
@@ -55,7 +55,8 @@ Check out this [YouTube playlist](https://www.youtube.com/watch?v=MEuX53M5mBU&li
 ```bash
 git clone https://github.com/PanoPepino/digital_presenter
 
-pip install digital_presenter/ .
+cd digital_presenter
+pip install -e ".[examples]"
 ```
 
 - To **use** within your manim files, call it with:
@@ -65,6 +66,28 @@ from manim_digital_presenter import *
 ```
 
 For detailed usage instructions and API reference, visit the [documentation](https://panopepino.github.io/digital_presenter/).
+
+## Documentation deployment
+
+In repository **Settings → Pages → Build and deployment**, set **Source** to
+**GitHub Actions** once. Push package changes to `main` to build and publish the
+documentation automatically. The **Deploy Sphinx Documentation** workflow runs
+regression tests and a strict Sphinx build before deployment. Its deployment
+environment shows the published URL. No personal access token is required.
+
+You can also run the workflow manually from the **Actions** tab on `main`.
+Ensure `.github/workflows/docs.yml` is committed at the repository root.
+Static media under `docs/_static` is published as committed; deployment does not
+rerender tutorial videos.
+
+For local preview, activate your Manim environment and run:
+
+```bash
+python -m pip install -r docs/requirements.txt
+python scripts/serve_docs.py --port 0
+```
+
+Open the exact URL printed by the script.
 
 ## Important Notes
 
@@ -92,4 +115,3 @@ If you find this project helpful, consider supporting me. Thank you!
 - Add donation stuff to documentation and github [_]
 
 -->
-

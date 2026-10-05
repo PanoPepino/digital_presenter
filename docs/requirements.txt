@@ -1,7 +1,3 @@
-sphinx>=7.0
-sphinx_rtd_theme
-sphinx-autodoc-typehints
-myst-parser
+sphinx>=7.4.7
 sphinx-copybutton
-furo
-
+furo>=2024.8.6

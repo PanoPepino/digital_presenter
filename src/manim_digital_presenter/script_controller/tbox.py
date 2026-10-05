@@ -1,5 +1,8 @@
-from manim import *
-import csv
+import math
+
+from manim import BLACK, DARK_BLUE, DOWN, DR, RoundedRectangle, VGroup, config
+
+import numpy as np
 
 __all__ = ["Text_Box"]
 
@@ -23,7 +26,7 @@ class Text_Box(VGroup):
     :type box_color: str, optional
 
     :param box_position: Position of the box using corner constants (e.g., DR, DL). Defaults to DR.
-    :type box_position: str, optional
+    :type box_position: list | numpy.ndarray, optional
 
     :param box_buff: Buffer distance from the specified corner. Defaults to 0.1
     :type box_buff: float, optional
@@ -40,8 +43,7 @@ class Text_Box(VGroup):
            width=10,
            height=3,
            box_fill_color=RED,
-           triangle_color=YELLOW,
-           box_position="DL"
+           box_position=DL
        )
        scene.add(custom_box)
 
@@ -49,12 +51,12 @@ class Text_Box(VGroup):
 
     def __init__(
         self,
-        width: float = None,
-        height: float = None,
-        box_fill_color: list | str = [DARK_BLUE, BLACK],
+        width: float | None = None,
+        height: float | None = None,
+        box_fill_color: list | str | None = None,
         box_fill_opacity: float = 0.1,
         box_color: str = DARK_BLUE,
-        box_position: list = DR,
+        box_position: list | np.ndarray = DR,
         box_buff: float = 0.1,
         corner_box: float = 0.2,
         **kwargs):
@@ -65,6 +67,19 @@ class Text_Box(VGroup):
         if height is None:
             height = config["frame_height"] / 5
 
+        if any(not math.isfinite(value) or value <= 0 for value in (width, height)):
+            raise ValueError("Text box width and height must be finite and positive")
+        if not math.isfinite(box_fill_opacity) or not 0 <= box_fill_opacity <= 1:
+            raise ValueError("box_fill_opacity must be between 0 and 1")
+        if not math.isfinite(corner_box) or corner_box < 0:
+            raise ValueError("corner_box must be finite and nonnegative")
+        if not math.isfinite(box_buff) or box_buff < 0:
+            raise ValueError("box_buff must be finite and nonnegative")
+        box_position = np.array(box_position, dtype=float, copy=True)
+        if box_position.shape != (3,) or not np.isfinite(box_position).all():
+            raise ValueError("box_position must contain three finite coordinates")
+        if box_fill_color is None:
+            box_fill_color = [DARK_BLUE, BLACK]
         self.box = RoundedRectangle(
             width=width,
             height=height,
@@ -77,5 +92,6 @@ class Text_Box(VGroup):
         self.box.set_sheen_direction(0.5 * DOWN)
         self.add(self.box)
 
-
-
+    def get_box(self) -> RoundedRectangle:
+        """Return owned dialogue rectangle without relying on Manim's fallback."""
+        return self.box

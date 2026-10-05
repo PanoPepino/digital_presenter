@@ -1,3 +1,5 @@
+:orphan:
+
 manim_digital_presenter
 =======================
 
@@ -5,3 +7,4 @@ manim_digital_presenter
    :members:
    :undoc-members:
    :show-inheritance:
+   :no-index:

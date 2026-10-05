@@ -1,8 +1,7 @@
-from .eyes import *
-from .creature import *
-from .new_logo import *
+"""Presenter components with explicit public exports."""
 
-__all__ = []
-__all__ += creature.__all__
-__all__ += eyes.__all__
-__all__ += new_logo.__all__
+from .eyes import Eyes
+from .creature import Creature
+from .banner import DigitalPresenterBanner
+
+__all__ = ["Creature", "Eyes", "DigitalPresenterBanner"]

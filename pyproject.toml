@@ -1,25 +1,23 @@
 [build-system]
 build-backend = "hatchling.build"
-requires = ["hatchling", "hatch-fancy-pypi-readme"]
+requires = ["hatchling>=1.27"]
 
 [project]
 authors = [{name = "PanoPepino", email = "panizofisico@gmail.com"}]
 classifiers = [
   "Development Status :: 4 - Beta",
-  "Programming Language :: Python :: 3.9",
-  "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Topic :: Multimedia :: Graphics",
   "Operating System :: OS Independent",
 ]
 dependencies = [
-  "manim>=0.18",
+  "manim>=0.18.1",
   "numpy>=2.0.2",
-  "pybtex>=0.23.0",
 ]
 description = "Package to create and use 2D animated companions in Manim libraries"
-dynamic = ["readme", "version"]
+readme = "README.md"
+dynamic = ["version"]
 keywords = ["manim", "digital companion", "animation", "presenter"]
 license = "MIT"
 license-files = ["LICENSE*"]  # Glob pattern for license files
@@ -29,8 +27,11 @@ requires-python = ">=3.11"
 [project.optional-dependencies]
 docs = [
   "furo>= 2024.8.6",
-  "sphinx>= 7.4.7",
+  "sphinx>=7.4.7",
+  "sphinx-copybutton",
 ]
+
+examples = ["manim>=0.19", "manim-slides"]
 
 [project.urls]
 Homepage = "https://panopepino.github.io/digital_presenter/"
@@ -41,16 +42,25 @@ Repository = "https://github.com/PanoPepino/digital_presenter"
 path = "src/manim_digital_presenter/__version__.py"
 
 [tool.ruff.lint]
-extend-ignore = []
-extend-select = [
-  "D",  # Documentation lints
-  "I",  # Isort
-  "TID",  # https://docs.astral.sh/ruff/rules/relative-imports/
-]
-isort = {known-first-party = ["manim_digital_presenter"]}
+select = ["E4", "E7", "E9", "F"]
+
+[tool.ruff]
+include = ["src/**/*.py", "tests/**/*.py", "docs/conf.py"]
+target-version = "py311"
+
+[tool.ruff.lint.per-file-ignores]
+"src/manim_digital_presenter/my_imports.py" = ["F401", "F403"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["manim_digital_presenter"]
 
 [tool.uv]
 dev-dependencies = [
-  "digital_presenter[docs]",
+  "manim_digital_presenter[docs]",
+  "ruff>=0.9",
+  "build>=1.2",
   "pre-commit>=3.5.0",
 ]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/manim_digital_presenter"]

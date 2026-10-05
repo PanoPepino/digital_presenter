@@ -23,5 +23,5 @@ Let us start from scratch! In order to do so, we will use the package itself to 
 
 .. note::
 
-   Note that previous presentation have been crafted using `Manim Slides <https://github.com/PanoPepino/beanim/issues>`_. In case you would like to create slides, you will need to install that
+   Note that previous presentation have been crafted using `Manim Slides <https://github.com/jeertmans/manim-slides>`_. In case you would like to create slides, you will need to install that
    package also. 

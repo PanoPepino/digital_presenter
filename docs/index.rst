@@ -35,7 +35,7 @@ After installation, you can find the most straightforward explanation of the bas
 Advanced Examples
 ----------------------
 
-The following `Youtube playlist <https://www.youtube.com/watch?v=MEuX53M5mBU&list=PL7qJnArvRQzHci5IAHRqCuS2eF4_baHTR>`_ correspond to a series of videos prepared with a rudimentary version of this package. However, they can give you an idea of the kind of animations you can create with it. You can also find more convoluted pieces of code in :doc:`examples`.
+The following `Youtube playlist <https://www.youtube.com/watch?v=MEuX53M5mBU&list=PL7qJnArvRQzHci5IAHRqCuS2eF4_baHTR>`_ correspond to a series of videos prepared with a rudimentary version of this package. However, they can give you an idea of the kind of animations you can create with it.
 
 .. note::
     Note that the previous videos correspond to an older version of the package, so some things may have changed. (Syntaxis and package structure are way more straightforward and clean now!!)
@@ -52,7 +52,7 @@ If you want more detailed explanations, see :doc:`how_to_use` and the :doc:`api/
 
 .. warning::
 
-   This is a package under construction. New features and a more optimised organisation will come. In case you find some and/or have some suggestions, please report at `github issues <https://github.com/PanoPepino/beanim/issues>`_.
+   This is a package under construction. New features and a more optimised organisation will come. In case you find some and/or have some suggestions, please report at `github issues <https://github.com/PanoPepino/digital_presenter/issues>`_.
    
 .. note::
 
@@ -64,7 +64,6 @@ If you want more detailed explanations, see :doc:`how_to_use` and the :doc:`api/
 
    installation
    how_to_use
-   examples
    api/modules
 
 
@@ -82,4 +81,3 @@ If you want more detailed explanations, see :doc:`how_to_use` and the :doc:`api/
             style="height: 50px; border-radius: 10px;">
      </a>
    </div>
-

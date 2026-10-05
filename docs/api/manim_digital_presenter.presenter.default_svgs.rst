@@ -1,3 +1,5 @@
+:orphan:
+
 default_svgs
 ============
 
